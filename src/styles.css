@@ -1,0 +1,49 @@
+.gameField {
+    height: 90vh;
+    width: 90vh;
+}
+
+.row-10 {
+    height: 10%;
+    width: 100%;
+}
+
+.row-25 {
+    height: 4%;
+    width: 100%;
+}
+
+.row-50 {
+    height: 2%;
+    width: 100%;
+}
+
+.row-100 {
+    height: 1%;
+    width: 100%;
+}
+
+.cell-10 {
+    height: 100%;
+    width: 10%;
+}
+
+.cell-25 {
+    height: 100%;
+    width: 4%;
+}
+
+.cell-50 {
+    height: 100%;
+    width: 2%;
+}
+
+.cell-100 {
+    height: 100%;
+    width: 1%;
+}
+
+img {
+    height: 100%;
+    width: 100%;
+}
