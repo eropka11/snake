@@ -1,4 +1,4 @@
-import blackField from './images/emptyFieldSmall.png';
+import blackField from './images/emptyField.png';
 
 export default (squareSideLength) => {
   const gameField = document.createElement('div');
