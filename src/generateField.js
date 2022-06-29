@@ -7,6 +7,7 @@ export default (squareSideLength) => {
   for (let i = 1; i <= squareSideLength; i += 1) {
     const row = document.createElement('div');
     row.classList.add(`row-${squareSideLength}`);
+    row.dataset.row = i;
     gameField.append(row);
 
     for (let k = 1; k <= squareSideLength; k += 1) {
@@ -15,7 +16,7 @@ export default (squareSideLength) => {
       emptyField.classList.add('d-block');
       const cell = document.createElement('div');
       cell.classList.add(`cell-${squareSideLength}`, 'd-inline-block');
-      cell.id = `r${i}c${k}`;
+      cell.dataset.column = k;
       cell.append(emptyField);
       row.append(cell);
     }
