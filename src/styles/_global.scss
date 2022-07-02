@@ -47,3 +47,15 @@ img {
     height: 100%;
     width: 100%;
 }
+
+#left {
+    transform: rotate(-90deg);
+}
+
+#right {
+    transform: rotate(90deg);
+}
+
+#down {
+    transform: rotate(180deg);
+}
