@@ -13,6 +13,7 @@ export default () => {
   };
 
   const watchedState = watcher(state);
+
   const initiateState = (squareSideLength) => {
     for (let i = 1; i <= squareSideLength; i += 1) {
       for (let k = 1; k <= squareSideLength; k += 1) {
@@ -21,7 +22,7 @@ export default () => {
           column: k,
           content: 'empty',
         };
-        state.field.cells.push(cell);
+        watchedState.field.cells.push(cell);
       }
     }
   };
@@ -47,6 +48,8 @@ export default () => {
     watchedState.field.cells[nextIndex].content = content;
   };
 
+  let movingTimeout;
+
   const moveUp = (head) => {
     const nextHeadPosition = { row: head.row - 1, column: head.column };
     const nextHeadIndex = findNextIndex(nextHeadPosition);
@@ -56,13 +59,7 @@ export default () => {
     sendCellUpdateToWatcher(nextHeadIndex, 'head', nextHeadPosition, head);
     watchedState.currentHeadPosition = nextHeadPosition;
     watchedState.currentMovement = 'up';
-    const moveUpTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
-    window.addEventListener('keydown', (e) => {
-      const moveStoppers = ['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD'];
-      if (moveStoppers.includes(e.code)) {
-        window.clearTimeout(moveUpTimeout);
-      }
-    });
+    movingTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
   };
 
   const moveDown = (head) => {
@@ -74,13 +71,7 @@ export default () => {
     sendCellUpdateToWatcher(nextHeadIndex, 'head', nextHeadPosition, head);
     watchedState.currentHeadPosition = nextHeadPosition;
     watchedState.currentMovement = 'down';
-    const moveDownTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
-    window.addEventListener('keydown', (e) => {
-      const moveStoppers = ['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD'];
-      if (moveStoppers.includes(e.code)) {
-        window.clearTimeout(moveDownTimeout);
-      }
-    });
+    movingTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
   };
 
   const moveLeft = (head) => {
@@ -92,13 +83,7 @@ export default () => {
     sendCellUpdateToWatcher(nextHeadIndex, 'head', nextHeadPosition, head);
     watchedState.currentHeadPosition = nextHeadPosition;
     watchedState.currentMovement = 'left';
-    const moveLeftTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
-    window.addEventListener('keydown', (e) => {
-      const moveStoppers = ['ArrowUp', 'ArrowDown', 'KeyS', 'KeyW'];
-      if (moveStoppers.includes(e.code)) {
-        window.clearTimeout(moveLeftTimeout);
-      }
-    });
+    movingTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
   };
 
   const moveRight = (head) => {
@@ -110,13 +95,7 @@ export default () => {
     sendCellUpdateToWatcher(nextHeadIndex, 'head', nextHeadPosition, head);
     watchedState.currentHeadPosition = nextHeadPosition;
     watchedState.currentMovement = 'right';
-    const moveRightTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
-    window.addEventListener('keydown', (e) => {
-      const moveStoppers = ['ArrowUp', 'ArrowDown', 'KeyS', 'KeyW'];
-      if (moveStoppers.includes(e.code)) {
-        window.clearTimeout(moveRightTimeout);
-      }
-    });
+    movingTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
   };
 
   const startForm = document.querySelector('form');
@@ -143,26 +122,30 @@ export default () => {
       switch (event.code) {
         case 'KeyS':
         case 'ArrowDown':
-          if (state.currentMovement !== 'up') {
-            window.setTimeout(moveDown, 500, state.currentHeadPosition);
+          if (state.currentMovement !== 'up' && state.currentMovement !== 'down') {
+            window.clearTimeout(movingTimeout);
+            movingTimeout = window.setTimeout(moveDown, 500, state.currentHeadPosition);
           }
           break;
         case 'KeyW':
         case 'ArrowUp':
-          if (state.currentMovement !== 'down') {
-            window.setTimeout(moveUp, 500, state.currentHeadPosition);
+          if (state.currentMovement !== 'up' && state.currentMovement !== 'down') {
+            window.clearTimeout(movingTimeout);
+            movingTimeout = window.setTimeout(moveUp, 500, state.currentHeadPosition);
           }
           break;
         case 'KeyA':
         case 'ArrowLeft':
-          if (state.currentMovement !== 'right') {
-            window.setTimeout(moveLeft, 500, state.currentHeadPosition);
+          if (state.currentMovement !== 'right' && state.currentMovement !== 'left') {
+            window.clearTimeout(movingTimeout);
+            movingTimeout = window.setTimeout(moveLeft, 500, state.currentHeadPosition);
           }
           break;
         case 'KeyD':
         case 'ArrowRight':
-          if (state.currentMovement !== 'left') {
-            window.setTimeout(moveRight, 500, state.currentHeadPosition);
+          if (state.currentMovement !== 'right' && state.currentMovement !== 'left') {
+            window.clearTimeout(movingTimeout);
+            movingTimeout = window.setTimeout(moveRight, 500, state.currentHeadPosition);
           }
           break;
         default:
