@@ -16,6 +16,7 @@ export default (squareSideLength) => {
       emptyField.classList.add('d-block');
       const cell = document.createElement('div');
       cell.classList.add(`cell-${squareSideLength}`, 'd-inline-block');
+      cell.dataset.row = i;
       cell.dataset.column = k;
       cell.append(emptyField);
       row.append(cell);

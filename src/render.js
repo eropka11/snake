@@ -2,6 +2,7 @@ import generateField from './generateField.js';
 import snakeHead from './images/snakeHead.png';
 import food from './images/food.png';
 import blackField from './images/emptyField.png';
+import snakeBody from './images/snakeBody.png';
 import loseMessage from './images/loseMessage.jpg';
 
 export default (path, value) => {
@@ -36,6 +37,16 @@ export default (path, value) => {
       newFood.classList.add('d-block');
       cellOfNewFood.lastChild.remove();
       cellOfNewFood.append(newFood);
+    }
+    if (value.content === 'body') {
+      const cellOfNewBody = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
+      const newBody = document.createElement('img');
+      newBody.src = snakeBody;
+      newBody.classList.add('d-block', 'body');
+      cellOfNewBody.lastChild.remove();
+      cellOfNewBody.append(newBody);
+      setTimeout(1000);
+      console.log(cellOfNewBody, cellOfNewBody.lastChild);
     }
   }
   if (path === 'isGameOver') {

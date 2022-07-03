@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import watcher from './watcher.js';
+import onChange from 'on-change';
+import render from './render.js';
 
 export default () => {
   const state = {
@@ -14,7 +15,9 @@ export default () => {
     isGameOver: false,
   };
 
-  const watchedState = watcher(state);
+  const watchedState = onChange(state, (path, value) => {
+    render(path, value);
+  });
 
   const initiateState = (squareSideLength) => {
     for (let i = 1; i <= squareSideLength; i += 1) {
@@ -41,8 +44,8 @@ export default () => {
     return emptyCells[randomIndex];
   };
 
-  const findNextIndex = (nextPosition) => _.findIndex(state.field.cells, {
-    row: nextPosition.row, column: nextPosition.column,
+  const findIndex = (position) => _.findIndex(state.field.cells, {
+    row: position.row, column: position.column,
   });
 
   const fieldUpdater = (nextIndex, content, nextCoordinate, currentCoordinate, newDirection) => {
@@ -56,54 +59,106 @@ export default () => {
 
   const moveUp = (head) => {
     const nextHeadPosition = { row: head.row - 1, column: head.column };
-    const nextHeadIndex = findNextIndex(nextHeadPosition);
+    const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.row < 2) {
       watchedState.isGameOver = true;
       return;
     }
-    fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'up');
-    watchedState.newHeadPosition = nextHeadPosition;
-    watchedState.currentMovementDirection = 'up';
-    movingTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
+    if (state.field.cells[nextHeadIndex].content === 'empty') {
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'up');
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'up';
+      movingTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
+    }
+    if (state.field.cells[nextHeadIndex].content === 'food') {
+      const nextFoodPosition = generateFoodPosition();
+      const nextFoodIndex = findIndex(nextFoodPosition);
+      const headIndex = findIndex(head);
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'up');
+      fieldUpdater(headIndex, 'body', head);
+      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'up';
+      movingTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
+    }
   };
 
   const moveDown = (head) => {
     const nextHeadPosition = { row: head.row + 1, column: head.column };
-    const nextHeadIndex = findNextIndex(nextHeadPosition);
+    const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.row === state.field.difficulty) {
       watchedState.newHeadPosition = 'dead';
       return;
     }
-    fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'down');
-    watchedState.newHeadPosition = nextHeadPosition;
-    watchedState.currentMovementDirection = 'down';
-    movingTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
+    if (state.field.cells[nextHeadIndex].content === 'empty') {
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'down');
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'down';
+      movingTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
+    }
+    if (state.field.cells[nextHeadIndex].content === 'food') {
+      const nextFoodPosition = generateFoodPosition();
+      const nextFoodIndex = findIndex(nextFoodPosition);
+      const headIndex = findIndex(head);
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'down');
+      fieldUpdater(headIndex, 'body', head);
+      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'down';
+      movingTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
+    }
   };
 
   const moveLeft = (head) => {
     const nextHeadPosition = { row: head.row, column: head.column - 1 };
-    const nextHeadIndex = findNextIndex(nextHeadPosition);
+    const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.column < 2) {
       watchedState.newHeadPosition = 'dead';
       return;
     }
-    fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'left');
-    watchedState.newHeadPosition = nextHeadPosition;
-    watchedState.currentMovementDirection = 'left';
-    movingTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
+    if (state.field.cells[nextHeadIndex].content === 'empty') {
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'left');
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'left';
+      movingTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
+    }
+    if (state.field.cells[nextHeadIndex].content === 'food') {
+      const nextFoodPosition = generateFoodPosition();
+      const nextFoodIndex = findIndex(nextFoodPosition);
+      const headIndex = findIndex(head);
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'left');
+      fieldUpdater(headIndex, 'body', head);
+      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'left';
+      movingTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
+    }
   };
 
   const moveRight = (head) => {
     const nextHeadPosition = { row: head.row, column: head.column + 1 };
-    const nextHeadIndex = findNextIndex(nextHeadPosition);
+    const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.column === state.field.difficulty) {
       watchedState.newHeadPosition = 'dead';
       return;
     }
-    fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'right');
-    watchedState.newHeadPosition = nextHeadPosition;
-    watchedState.currentMovementDirection = 'right';
-    movingTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
+    if (state.field.cells[nextHeadIndex].content === 'empty') {
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'right');
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'right';
+      movingTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
+    }
+    if (state.field.cells[nextHeadIndex].content === 'food') {
+      const nextFoodPosition = generateFoodPosition();
+      const nextFoodIndex = findIndex(nextFoodPosition);
+      const headIndex = findIndex(head);
+      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'right');
+      fieldUpdater(headIndex, 'body', head);
+      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
+      watchedState.newHeadPosition = nextHeadPosition;
+      watchedState.currentMovementDirection = 'right';
+      movingTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
+    }
   };
 
   const startForm = document.querySelector('form');
@@ -119,13 +174,13 @@ export default () => {
     watchedState.newHeadPosition = headPosition;
     const foodPosition = generateFoodPosition();
 
-    const nextHeadIndex = findNextIndex(state.newHeadPosition);
+    const nextHeadIndex = findIndex(state.newHeadPosition);
     fieldUpdater(nextHeadIndex, 'head', state.newHeadPosition, null, 'up');
 
-    const nextFoodIndex = findNextIndex(foodPosition);
+    const nextFoodIndex = findIndex(foodPosition);
     fieldUpdater(nextFoodIndex, 'food', foodPosition);
 
-    window.setTimeout(moveUp, 1000, state.newHeadPosition);
+    moveUp(state.newHeadPosition);
     window.addEventListener('keydown', (event) => {
       switch (event.code) {
         case 'KeyS':
