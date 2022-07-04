@@ -14,14 +14,13 @@ export default (path, value) => {
   if (path === 'coordinatesToUpdate') {
     if (value.content === 'head') {
       if (value.currentCoordinate !== null) {
-        const cellOfCurrentHead = document.querySelector(`[data-row="${value.currentCoordinate.row}"] > [data-column="${value.currentCoordinate.column}"]`);
-        const currentHead = document.createElement('img');
-        currentHead.src = blackField;
-        currentHead.classList.add('d-block');
-        cellOfCurrentHead.lastChild.remove();
-        cellOfCurrentHead.append(currentHead);
+        const cellToClear = document.querySelector(`[data-row="${value.currentCoordinate.row}"] > [data-column="${value.currentCoordinate.column}"]`);
+        const imageForEmptyCell = document.createElement('img');
+        imageForEmptyCell.src = blackField;
+        imageForEmptyCell.classList.add('d-block');
+        cellToClear.lastChild.remove();
+        cellToClear.append(imageForEmptyCell);
       }
-
       const cellOfNewHead = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
       const newHead = document.createElement('img');
       newHead.src = snakeHead;
@@ -38,15 +37,33 @@ export default (path, value) => {
       cellOfNewFood.lastChild.remove();
       cellOfNewFood.append(newFood);
     }
-    if (value.content === 'body') {
+    if (value.content === 'addBody') {
       const cellOfNewBody = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
       const newBody = document.createElement('img');
       newBody.src = snakeBody;
       newBody.classList.add('d-block', 'body');
       cellOfNewBody.lastChild.remove();
       cellOfNewBody.append(newBody);
-      setTimeout(1000);
-      console.log(cellOfNewBody, cellOfNewBody.lastChild);
+    }
+    if (value.content === 'body') {
+      if (value.nextCoordinate !== undefined) {
+        const newBodyPosition = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
+        const bodyImage = document.createElement('img');
+        bodyImage.src = snakeBody;
+        bodyImage.classList.add('d-block');
+        newBodyPosition.lastChild.remove();
+        newBodyPosition.append(bodyImage);
+      }
+    }
+    if (value.content === 'tail') {
+      if (value.currentCoordinate !== undefined) {
+        const cellToClear = document.querySelector(`[data-row="${value.currentCoordinate.row}"] > [data-column="${value.currentCoordinate.column}"]`);
+        const imageForEmptyCell = document.createElement('img');
+        imageForEmptyCell.src = blackField;
+        imageForEmptyCell.classList.add('d-block');
+        cellToClear.lastChild.remove();
+        cellToClear.append(imageForEmptyCell);
+      }
     }
   }
   if (path === 'isGameOver') {
