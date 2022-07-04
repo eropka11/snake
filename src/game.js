@@ -53,7 +53,7 @@ export default () => {
     watchedState.coordinatesToUpdate = {
       nextCoordinate, content, currentCoordinate, newDirection,
     };
-    if (content === 'addBody') {
+    if (content === 'addBody' || content === 'tail') {
       watchedState.field.cells[nextIndex].content = 'body';
     } else {
       watchedState.field.cells[nextIndex].content = content;
@@ -70,17 +70,18 @@ export default () => {
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const tailToDelete = _.last(state.bodyCoordinates);
       const headIndex = findIndex(head);
       watchedState.bodyCoordinates.unshift(head);
       fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'up');
       if (state.bodyCoordinates.length > 1) {
+        const tailToDelete = _.last(state.bodyCoordinates);
         fieldUpdater(headIndex, 'body', head);
         fieldUpdater(headIndex, 'tail', head, tailToDelete);
         const tailIndex = findIndex(tailToDelete);
         watchedState.field.cells[tailIndex].content = 'empty';
+      } else {
+        watchedState.field.cells[headIndex].content = 'empty';
       }
-      watchedState.field.cells[headIndex].content = 'empty';
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'up';
       watchedState.bodyCoordinates.pop();
@@ -108,17 +109,18 @@ export default () => {
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const tailToDelete = _.last(state.bodyCoordinates);
       const headIndex = findIndex(head);
       watchedState.bodyCoordinates.unshift(head);
       fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'down');
       if (state.bodyCoordinates.length > 1) {
+        const tailToDelete = _.last(state.bodyCoordinates);
         fieldUpdater(headIndex, 'body', head);
         fieldUpdater(headIndex, 'tail', head, tailToDelete);
         const tailIndex = findIndex(tailToDelete);
         watchedState.field.cells[tailIndex].content = 'empty';
+      } else {
+        watchedState.field.cells[headIndex].content = 'empty';
       }
-      watchedState.field.cells[headIndex].content = 'empty';
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'down';
       watchedState.bodyCoordinates.pop();
@@ -146,17 +148,18 @@ export default () => {
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const tailToDelete = _.last(state.bodyCoordinates);
       const headIndex = findIndex(head);
       watchedState.bodyCoordinates.unshift(head);
       fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'left');
       if (state.bodyCoordinates.length > 1) {
+        const tailToDelete = _.last(state.bodyCoordinates);
         fieldUpdater(headIndex, 'body', head);
         fieldUpdater(headIndex, 'tail', head, tailToDelete);
         const tailIndex = findIndex(tailToDelete);
         watchedState.field.cells[tailIndex].content = 'empty';
+      } else {
+        watchedState.field.cells[headIndex].content = 'empty';
       }
-      watchedState.field.cells[headIndex].content = 'empty';
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'left';
       watchedState.bodyCoordinates.pop();
@@ -184,17 +187,18 @@ export default () => {
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const tailToDelete = _.last(state.bodyCoordinates);
       const headIndex = findIndex(head);
       watchedState.bodyCoordinates.unshift(head);
       fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head, 'right');
       if (state.bodyCoordinates.length > 1) {
+        const tailToDelete = _.last(state.bodyCoordinates);
         fieldUpdater(headIndex, 'body', head);
         fieldUpdater(headIndex, 'tail', head, tailToDelete);
         const tailIndex = findIndex(tailToDelete);
         watchedState.field.cells[tailIndex].content = 'empty';
+      } else {
+        watchedState.field.cells[headIndex].content = 'empty';
       }
-      watchedState.field.cells[headIndex].content = 'empty';
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'right';
       watchedState.bodyCoordinates.pop();
