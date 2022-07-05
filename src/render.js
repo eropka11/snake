@@ -4,6 +4,7 @@ import food from './images/food.png';
 import blackField from './images/emptyField.png';
 import snakeBody from './images/snakeBody.png';
 import loseMessage from './images/loseMessage.jpg';
+import snakeTail from './images/snakeTail.png';
 
 export default (path, value) => {
   const body = document.querySelector('body');
@@ -13,19 +14,14 @@ export default (path, value) => {
   }
   if (path === 'coordinatesToUpdate') {
     if (value.content === 'head') {
-      if (value.currentCoordinate !== null) {
-        const cellToClear = document.querySelector(`[data-row="${value.currentCoordinate.row}"] > [data-column="${value.currentCoordinate.column}"]`);
-        const imageForEmptyCell = document.createElement('img');
-        imageForEmptyCell.src = blackField;
-        imageForEmptyCell.classList.add('d-block');
-        cellToClear.lastChild.remove();
-        cellToClear.append(imageForEmptyCell);
-      }
       const cellOfNewHead = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
       const newHead = document.createElement('img');
       newHead.src = snakeHead;
-      newHead.id = value.newDirection;
-      newHead.classList.add('d-block');
+      newHead.id = value.nextCoordinate.currentDirection;
+      if (newHead.classList.contains(value.nextCoordinate.previousDirection)) {
+        newHead.classList.remove(value.nextCoordinate.previousDirection);
+      }
+      newHead.classList.add('d-block', value.nextCoordinate.currentDirection);
       cellOfNewHead.lastChild.remove();
       cellOfNewHead.append(newHead);
     }
@@ -41,7 +37,7 @@ export default (path, value) => {
       const cellOfNewBody = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
       const newBody = document.createElement('img');
       newBody.src = snakeBody;
-      newBody.classList.add('d-block', 'body');
+      newBody.classList.add('d-block');
       cellOfNewBody.lastChild.remove();
       cellOfNewBody.append(newBody);
     }
@@ -56,7 +52,7 @@ export default (path, value) => {
       }
     }
     if (value.content === 'tail') {
-      if (value.currentCoordinate !== undefined) {
+      if (value.currentCoordinate !== null) {
         const cellToClear = document.querySelector(`[data-row="${value.currentCoordinate.row}"] > [data-column="${value.currentCoordinate.column}"]`);
         const imageForEmptyCell = document.createElement('img');
         imageForEmptyCell.src = blackField;
@@ -64,6 +60,15 @@ export default (path, value) => {
         cellToClear.lastChild.remove();
         cellToClear.append(imageForEmptyCell);
       }
+      const newTailPosition = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
+      const tailImage = document.createElement('img');
+      tailImage.src = snakeTail;
+      if (tailImage.classList.contains(value.nextCoordinate.previousDirection)) {
+        tailImage.classList.remove(value.nextCoordinate.previousDirection);
+      }
+      tailImage.classList.add('d-block', value.nextCoordinate.nextDirection);
+      newTailPosition.lastChild.remove();
+      newTailPosition.append(tailImage);
     }
   }
   if (path === 'isGameOver') {
