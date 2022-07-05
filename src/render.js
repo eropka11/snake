@@ -3,7 +3,6 @@ import snakeHead from './images/snakeHead.png';
 import food from './images/food.png';
 import blackField from './images/emptyField.png';
 import snakeBody from './images/snakeBody.png';
-import loseMessage from './images/loseMessage.jpg';
 import snakeTail from './images/snakeTail.png';
 
 export default (path, value) => {
@@ -71,11 +70,13 @@ export default (path, value) => {
       newTailPosition.append(tailImage);
     }
   }
-  if (path === 'isGameOver') {
-    const youDeadMessage = document.createElement('img');
-    youDeadMessage.src = loseMessage;
+  if (path === 'finalScore') {
+    const endGameMessege = document.createElement('div');
+    const endGameHeader = document.createElement('h1');
+    endGameHeader.textContent = `Твой счёт: ${value}`;
+    endGameMessege.append(endGameHeader);
     body.textContent = '';
-    body.append(youDeadMessage);
+    body.append(endGameMessege);
   }
   return 1;
 };

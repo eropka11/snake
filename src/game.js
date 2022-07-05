@@ -9,13 +9,14 @@ export default () => {
       speed: '',
       cells: [],
     },
+    finalScore: '',
     coordinatesToUpdate: '',
     currentMovementDirection: 'up',
     newMovementDirection: '',
     newHeadPosition: '',
     tailPosition: '',
-    isGameOver: false,
     bodyCoordinates: [],
+    scoreCounter: 0,
   };
 
   const watchedState = onChange(state, (path, value) => {
@@ -77,7 +78,7 @@ export default () => {
     const tail = state.tailPosition;
     const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.row < 2 || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.isGameOver = true;
+      watchedState.finalScore = state.scoreCounter;
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
@@ -109,6 +110,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'up';
       watchedState.bodyCoordinates.unshift(head);
+      watchedState.scoreCounter += 1;
       movingTimeout = window.setTimeout(moveUp, state.field.speed, nextHeadPosition);
     }
   };
@@ -123,7 +125,7 @@ export default () => {
     const tail = state.tailPosition;
     const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.row === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.isGameOver = true;
+      watchedState.finalScore = state.scoreCounter;
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
@@ -155,6 +157,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'down';
       watchedState.bodyCoordinates.unshift(head);
+      watchedState.scoreCounter += 1;
       movingTimeout = window.setTimeout(moveDown, state.field.speed, nextHeadPosition);
     }
   };
@@ -169,7 +172,7 @@ export default () => {
     const tail = state.tailPosition;
     const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.column < 2 || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.isGameOver = true;
+      watchedState.finalScore = state.scoreCounter;
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
@@ -201,6 +204,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'left';
       watchedState.bodyCoordinates.unshift(head);
+      watchedState.scoreCounter += 1;
       movingTimeout = window.setTimeout(moveLeft, state.field.speed, nextHeadPosition);
     }
   };
@@ -215,7 +219,7 @@ export default () => {
     const tail = state.tailPosition;
     const nextHeadIndex = findIndex(nextHeadPosition);
     if (head.column === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.isGameOver = true;
+      watchedState.finalScore = state.scoreCounter;
       return;
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
@@ -247,6 +251,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'right';
       watchedState.bodyCoordinates.unshift(head);
+      watchedState.scoreCounter += 1;
       movingTimeout = window.setTimeout(moveRight, state.field.speed, nextHeadPosition);
     }
   };
