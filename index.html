@@ -12,19 +12,34 @@
     <h1>ЗМЕЙКА</h1>
     <br>
     <form>
-      <p>Выберите сложность</p>
+      <h2>Выберите сложность</h2>
+      <h3>Размер поля</h3>
       <div>
-        <input type="radio" value="10" id="easy" name="difficulty">
-        <label for="easy">Легко</label>
+        <input type="radio" value="10" id="small" name="field-size">
+        <label for="small">Небольшое</label>
 
-        <input type="radio" value="25" id="medium" name="difficulty">
-        <label for="medium">Средне</label>
+        <input type="radio" value="25" id="medium" name="field-size">
+        <label for="medium">Не очень большое</label>
 
-        <input type="radio" value="50" id="hard" name="difficulty">
-        <label for="hard">Сложно</label>
+        <input type="radio" value="50" id="large" name="field-size">
+        <label for="large">Просто большое</label>
 
-        <input type="radio" value="100" id="very-hard" name="difficulty">
-        <label for="very-hard">Очень сложно</label>
+        <input type="radio" value="100" id="x-large" name="field-size">
+        <label for="x-large">Очень большое</label>
+      </div>
+      <h3>Скорость</h3>
+      <div>
+        <input type="radio" value="1000" id="slow" name="speed">
+        <label for="slow">Небыстро</label>
+
+        <input type="radio" value="500" id="medium" name="speed">
+        <label for="medium">Не очень быстро</label>
+
+        <input type="radio" value="200" id="fast" name="speed">
+        <label for="fast">Просто быстро</label>
+
+        <input type="radio" value="50" id="very-fast" name="speed">
+        <label for="very-fast">Очень быстро</label>
       </div>
       <div>
         <button type="submit">Играть</button>

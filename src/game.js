@@ -6,6 +6,7 @@ export default () => {
   const state = {
     field: {
       difficulty: '',
+      speed: '',
       cells: [],
     },
     coordinatesToUpdate: '',
@@ -96,7 +97,7 @@ export default () => {
       watchedState.tailPosition = newTailPosition;
       watchedState.currentMovementDirection = 'up';
       watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveUp, state.field.speed, nextHeadPosition);
     }
     if (state.field.cells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition();
@@ -108,7 +109,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'up';
       watchedState.bodyCoordinates.unshift(head);
-      movingTimeout = window.setTimeout(moveUp, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveUp, state.field.speed, nextHeadPosition);
     }
   };
 
@@ -142,7 +143,7 @@ export default () => {
       watchedState.tailPosition = newTailPosition;
       watchedState.currentMovementDirection = 'down';
       watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveDown, state.field.speed, nextHeadPosition);
     }
     if (state.field.cells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition();
@@ -154,7 +155,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'down';
       watchedState.bodyCoordinates.unshift(head);
-      movingTimeout = window.setTimeout(moveDown, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveDown, state.field.speed, nextHeadPosition);
     }
   };
 
@@ -188,7 +189,7 @@ export default () => {
       watchedState.tailPosition = newTailPosition;
       watchedState.currentMovementDirection = 'left';
       watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveLeft, state.field.speed, nextHeadPosition);
     }
     if (state.field.cells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition();
@@ -200,7 +201,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'left';
       watchedState.bodyCoordinates.unshift(head);
-      movingTimeout = window.setTimeout(moveLeft, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveLeft, state.field.speed, nextHeadPosition);
     }
   };
 
@@ -234,7 +235,7 @@ export default () => {
       watchedState.tailPosition = newTailPosition;
       watchedState.currentMovementDirection = 'right';
       watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveRight, state.field.speed, nextHeadPosition);
     }
     if (state.field.cells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition();
@@ -246,7 +247,7 @@ export default () => {
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.currentMovementDirection = 'right';
       watchedState.bodyCoordinates.unshift(head);
-      movingTimeout = window.setTimeout(moveRight, 1000, nextHeadPosition);
+      movingTimeout = window.setTimeout(moveRight, state.field.speed, nextHeadPosition);
     }
   };
 
@@ -255,8 +256,10 @@ export default () => {
     e.preventDefault();
 
     const startFormData = new FormData(startForm);
-    const difficulty = Number(startFormData.get('difficulty'));
+    const difficulty = Number(startFormData.get('field-size'));
+    const speed = Number(startFormData.get('speed'));
     watchedState.field.difficulty = difficulty;
+    watchedState.field.speed = speed;
 
     initiateState(difficulty);
     const headPosition = generateHeadPosition(difficulty);
@@ -289,7 +292,11 @@ export default () => {
           if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
             window.clearTimeout(movingTimeout);
             watchedState.newHeadPosition.nextDirection = 'down';
-            movingTimeout = window.setTimeout(moveDown, 500, state.newHeadPosition);
+            movingTimeout = window.setTimeout(
+              moveDown,
+              state.field.speed / 2,
+              state.newHeadPosition,
+            );
           }
           break;
         case 'KeyW':
@@ -297,7 +304,7 @@ export default () => {
           if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
             window.clearTimeout(movingTimeout);
             watchedState.newHeadPosition.nextDirection = 'up';
-            movingTimeout = window.setTimeout(moveUp, 500, state.newHeadPosition);
+            movingTimeout = window.setTimeout(moveUp, state.field.speed / 2, state.newHeadPosition);
           }
           break;
         case 'KeyA':
@@ -305,7 +312,11 @@ export default () => {
           if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
             window.clearTimeout(movingTimeout);
             watchedState.newHeadPosition.nextDirection = 'left';
-            movingTimeout = window.setTimeout(moveLeft, 500, state.newHeadPosition);
+            movingTimeout = window.setTimeout(
+              moveLeft,
+              state.field.speed / 2,
+              state.newHeadPosition,
+            );
           }
           break;
         case 'KeyD':
@@ -313,7 +324,11 @@ export default () => {
           if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
             window.clearTimeout(movingTimeout);
             watchedState.newHeadPosition.nextDirection = 'right';
-            movingTimeout = window.setTimeout(moveRight, 500, state.newHeadPosition);
+            movingTimeout = window.setTimeout(
+              moveRight,
+              state.field.speed / 2,
+              state.newHeadPosition,
+            );
           }
           break;
         default:
