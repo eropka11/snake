@@ -59,3 +59,15 @@ img {
 .down {
     transform: rotate(180deg);
 }
+
+.downRight {
+    transform: rotate(-90deg);
+}
+
+.upRight {
+    transform: rotate(180deg);
+}
+
+.upLeft {
+    transform: rotate(90deg);
+}

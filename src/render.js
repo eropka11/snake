@@ -4,6 +4,7 @@ import food from './images/food.png';
 import blackField from './images/emptyField.png';
 import snakeBody from './images/snakeBody.png';
 import snakeTail from './images/snakeTail.png';
+import snakeBodyTurned from './images/snakeBodyTurned.png';
 
 export default (path, value) => {
   const body = document.querySelector('body');
@@ -33,19 +34,104 @@ export default (path, value) => {
       cellOfNewFood.append(newFood);
     }
     if (value.content === 'addBody') {
-      const cellOfNewBody = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
-      const newBody = document.createElement('img');
-      newBody.src = snakeBody;
-      newBody.classList.add('d-block');
-      cellOfNewBody.lastChild.remove();
-      cellOfNewBody.append(newBody);
+      const newBodyPosition = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
+      const bodyImage = document.createElement('img');
+      bodyImage.src = snakeBody;
+      if (value.nextCoordinate.nextDirection === value.nextCoordinate.currentDirection) {
+        bodyImage.src = snakeBody;
+        bodyImage.classList.add('d-block');
+      } else {
+        switch (value.nextCoordinate.currentDirection) {
+          case 'up':
+            if (value.nextCoordinate.nextDirection === 'left') {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'downLeft');
+            } else {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'downRight');
+            }
+            break;
+          case 'down':
+            if (value.nextCoordinate.nextDirection === 'left') {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'upLeft');
+            } else {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'upRight');
+            }
+            break;
+          case 'left':
+            if (value.nextCoordinate.nextDirection === 'down') {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'downRight');
+            } else {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'upRight');
+            }
+            break;
+          case 'right':
+            if (value.nextCoordinate.nextDirection === 'down') {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'downLeft');
+            } else {
+              bodyImage.src = snakeBodyTurned;
+              bodyImage.classList.add('d-block', 'upLeft');
+            }
+            break;
+          default:
+        }
+      }
+      newBodyPosition.lastChild.remove();
+      newBodyPosition.append(bodyImage);
     }
     if (value.content === 'body') {
       if (value.nextCoordinate !== undefined) {
         const newBodyPosition = document.querySelector(`[data-row="${value.nextCoordinate.row}"] > [data-column="${value.nextCoordinate.column}"]`);
         const bodyImage = document.createElement('img');
-        bodyImage.src = snakeBody;
-        bodyImage.classList.add('d-block');
+        if (value.nextCoordinate.nextDirection === value.nextCoordinate.currentDirection) {
+          bodyImage.src = snakeBody;
+          bodyImage.classList.add('d-block');
+        } else {
+          switch (value.nextCoordinate.currentDirection) {
+            case 'up':
+              if (value.nextCoordinate.nextDirection === 'left') {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'downLeft');
+              } else {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'downRight');
+              }
+              break;
+            case 'down':
+              if (value.nextCoordinate.nextDirection === 'left') {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'upLeft');
+              } else {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'upRight');
+              }
+              break;
+            case 'left':
+              if (value.nextCoordinate.nextDirection === 'down') {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'downRight');
+              } else {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'upRight');
+              }
+              break;
+            case 'right':
+              if (value.nextCoordinate.nextDirection === 'down') {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'downLeft');
+              } else {
+                bodyImage.src = snakeBodyTurned;
+                bodyImage.classList.add('d-block', 'upLeft');
+              }
+              break;
+            default:
+          }
+        }
         newBodyPosition.lastChild.remove();
         newBodyPosition.append(bodyImage);
       }
