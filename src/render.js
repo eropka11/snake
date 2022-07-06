@@ -5,9 +5,15 @@ import blackField from './images/emptyField.png';
 import snakeBody from './images/snakeBody.png';
 import snakeTail from './images/snakeTail.png';
 import snakeBodyTurned from './images/snakeBodyTurned.png';
+import showSettings from './showSettings.js';
 
 export default (path, value) => {
   const body = document.querySelector('body');
+  const languageSelectDiv = document.querySelector('div');
+  if (path === 'language') {
+    languageSelectDiv.remove();
+    body.append(showSettings(value));
+  }
   if (path === 'field.difficulty') {
     body.textContent = '';
     body.append(generateField(value));

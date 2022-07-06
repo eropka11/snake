@@ -9,6 +9,7 @@ export default () => {
       speed: '',
       cells: [],
     },
+    language: '',
     finalScore: '',
     coordinatesToUpdate: '',
     currentMovementDirection: 'up',
@@ -256,88 +257,97 @@ export default () => {
     }
   };
 
-  const startForm = document.querySelector('form');
-  startForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+  const languageButtons = document.querySelectorAll('button');
+  languageButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      watchedState.language = button.id;
+      const settingsForm = document.querySelector('form');
+      settingsForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const settingsFormData = new FormData(settingsForm);
+        const difficulty = Number(settingsFormData.get('field-size'));
+        const speed = Number(settingsFormData.get('speed'));
+        watchedState.field.difficulty = difficulty;
+        watchedState.field.speed = speed;
 
-    const startFormData = new FormData(startForm);
-    const difficulty = Number(startFormData.get('field-size'));
-    const speed = Number(startFormData.get('speed'));
-    watchedState.field.difficulty = difficulty;
-    watchedState.field.speed = speed;
+        initiateState(difficulty);
+        const headPosition = generateHeadPosition(difficulty);
+        const tailPosition = {
+          row: headPosition.row,
+          column: headPosition.column,
+          currentDirection: headPosition.direction,
+          nextDirection: headPosition.direction,
+          previousDirection: '',
+        };
+        watchedState.tailPosition = tailPosition;
+        watchedState.newHeadPosition = headPosition;
+        const foodPosition = generateFoodPosition();
 
-    initiateState(difficulty);
-    const headPosition = generateHeadPosition(difficulty);
-    const tailPosition = {
-      row: headPosition.row,
-      column: headPosition.column,
-      currentDirection: headPosition.direction,
-      nextDirection: headPosition.direction,
-      previousDirection: '',
-    };
-    watchedState.tailPosition = tailPosition;
-    watchedState.newHeadPosition = headPosition;
-    const foodPosition = generateFoodPosition();
+        const headIndex = findIndex(headPosition);
+        fieldUpdater(headIndex, 'head', headPosition, null);
 
-    const headIndex = findIndex(headPosition);
-    fieldUpdater(headIndex, 'head', headPosition, null);
+        const foodIndex = findIndex(foodPosition);
+        fieldUpdater(foodIndex, 'food', foodPosition);
 
-    const foodIndex = findIndex(foodPosition);
-    fieldUpdater(foodIndex, 'food', foodPosition);
+        const tailIndex = findIndex(tailPosition);
+        fieldUpdater(tailIndex, 'tail', tailPosition, null);
 
-    const tailIndex = findIndex(tailPosition);
-    fieldUpdater(tailIndex, 'tail', tailPosition, null);
+        moveUp(headPosition);
 
-    moveUp(headPosition);
-
-    window.addEventListener('keydown', (event) => {
-      switch (event.code) {
-        case 'KeyS':
-        case 'ArrowDown':
-          if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
-            window.clearTimeout(movingTimeout);
-            watchedState.newHeadPosition.nextDirection = 'down';
-            movingTimeout = window.setTimeout(
-              moveDown,
-              state.field.speed / 2,
-              state.newHeadPosition,
-            );
+        window.addEventListener('keydown', (event) => {
+          switch (event.code) {
+            case 'KeyS':
+            case 'ArrowDown':
+              if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
+                window.clearTimeout(movingTimeout);
+                watchedState.newHeadPosition.nextDirection = 'down';
+                movingTimeout = window.setTimeout(
+                  moveDown,
+                  state.field.speed / 2,
+                  state.newHeadPosition,
+                );
+              }
+              break;
+            case 'KeyW':
+            case 'ArrowUp':
+              if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
+                window.clearTimeout(movingTimeout);
+                watchedState.newHeadPosition.nextDirection = 'up';
+                movingTimeout = window.setTimeout(
+                  moveUp,
+                  state.field.speed / 2,
+                  state.newHeadPosition,
+                );
+              }
+              break;
+            case 'KeyA':
+            case 'ArrowLeft':
+              if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
+                window.clearTimeout(movingTimeout);
+                watchedState.newHeadPosition.nextDirection = 'left';
+                movingTimeout = window.setTimeout(
+                  moveLeft,
+                  state.field.speed / 2,
+                  state.newHeadPosition,
+                );
+              }
+              break;
+            case 'KeyD':
+            case 'ArrowRight':
+              if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
+                window.clearTimeout(movingTimeout);
+                watchedState.newHeadPosition.nextDirection = 'right';
+                movingTimeout = window.setTimeout(
+                  moveRight,
+                  state.field.speed / 2,
+                  state.newHeadPosition,
+                );
+              }
+              break;
+            default:
           }
-          break;
-        case 'KeyW':
-        case 'ArrowUp':
-          if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
-            window.clearTimeout(movingTimeout);
-            watchedState.newHeadPosition.nextDirection = 'up';
-            movingTimeout = window.setTimeout(moveUp, state.field.speed / 2, state.newHeadPosition);
-          }
-          break;
-        case 'KeyA':
-        case 'ArrowLeft':
-          if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
-            window.clearTimeout(movingTimeout);
-            watchedState.newHeadPosition.nextDirection = 'left';
-            movingTimeout = window.setTimeout(
-              moveLeft,
-              state.field.speed / 2,
-              state.newHeadPosition,
-            );
-          }
-          break;
-        case 'KeyD':
-        case 'ArrowRight':
-          if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
-            window.clearTimeout(movingTimeout);
-            watchedState.newHeadPosition.nextDirection = 'right';
-            movingTimeout = window.setTimeout(
-              moveRight,
-              state.field.speed / 2,
-              state.newHeadPosition,
-            );
-          }
-          break;
-        default:
-      }
+        });
+      });
     });
   });
 };
