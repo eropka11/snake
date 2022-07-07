@@ -12,7 +12,18 @@ export default (path, value) => {
   const languageSelectDiv = document.querySelector('div');
   if (path === 'language') {
     languageSelectDiv.remove();
-    body.append(showSettings(value));
+    const errorDiv = document.createElement('div');
+    errorDiv.classList.add('error');
+    body.append(showSettings(value), errorDiv);
+  }
+  if (path === 'error') {
+    const errorDiv = document.querySelector('.error');
+    const errorHeader = document.createElement('h4');
+    if (errorDiv.lastChild !== null) {
+      errorDiv.lastChild.remove();
+    }
+    errorHeader.textContent = value;
+    errorDiv.append(errorHeader);
   }
   if (path === 'field.difficulty') {
     body.textContent = '';

@@ -15,122 +15,161 @@ export default (lang) => {
   const settingsForm = document.createElement('form');
 
   const chooseDifficultDiv = document.createElement('div');
+  chooseDifficultDiv.classList.add('text-center');
   const chooseDifficultHeader = document.createElement('h2');
+  chooseDifficultHeader.classList.add('mt-3');
   chooseDifficultHeader.textContent = i18next.t('chooseDifficult');
   chooseDifficultDiv.append(chooseDifficultHeader);
   settingsForm.append(chooseDifficultDiv);
 
   const fieldSizeDiv = document.createElement('div');
+  fieldSizeDiv.classList.add('text-center', 'container');
   const fieldSizeHeader = document.createElement('h3');
   fieldSizeHeader.textContent = i18next.t('fieldSize');
+  fieldSizeHeader.classList.add('mt-3');
   fieldSizeDiv.append(fieldSizeHeader);
 
+  const rowDivForFieldSize = document.createElement('div');
+  rowDivForFieldSize.classList.add('row', 'justify-content-around', 'mt-3');
+  fieldSizeDiv.append(rowDivForFieldSize);
+
+  const colDivForSmallSize = document.createElement('div');
+  colDivForSmallSize.classList.add('col-12', 'col-sm-3');
   const smallFieldInput = document.createElement('input');
   smallFieldInput.type = 'radio';
   smallFieldInput.value = '10';
   smallFieldInput.id = 'small';
   smallFieldInput.name = 'field-size';
-  fieldSizeDiv.append(smallFieldInput);
+  colDivForSmallSize.append(smallFieldInput);
 
   const smallFieldLabel = document.createElement('label');
-  smallFieldLabel.for = 'small';
+  smallFieldLabel.setAttribute('for', 'small');
   smallFieldLabel.textContent = i18next.t('small');
-  fieldSizeDiv.append(smallFieldLabel);
+  colDivForSmallSize.append(smallFieldLabel);
+  rowDivForFieldSize.append(colDivForSmallSize);
 
+  const colDivForMediumSize = document.createElement('div');
+  colDivForMediumSize.classList.add('col-12', 'col-sm-3');
   const mediumFieldInput = document.createElement('input');
   mediumFieldInput.type = 'radio';
   mediumFieldInput.value = '25';
   mediumFieldInput.id = 'medium-size';
   mediumFieldInput.name = 'field-size';
-  fieldSizeDiv.append(mediumFieldInput);
+  colDivForMediumSize.append(mediumFieldInput);
 
   const mediumFieldLabel = document.createElement('label');
-  mediumFieldLabel.for = 'medium-size';
+  mediumFieldLabel.setAttribute('for', 'medium-size');
   mediumFieldLabel.textContent = i18next.t('mediumSize');
-  fieldSizeDiv.append(mediumFieldLabel);
+  colDivForMediumSize.append(mediumFieldLabel);
+  rowDivForFieldSize.append(colDivForMediumSize);
 
+  const colDivForLargeSize = document.createElement('div');
+  colDivForLargeSize.classList.add('col-12', 'col-sm-3');
   const largeFieldInput = document.createElement('input');
   largeFieldInput.type = 'radio';
   largeFieldInput.value = '50';
   largeFieldInput.id = 'large';
   largeFieldInput.name = 'field-size';
-  fieldSizeDiv.append(largeFieldInput);
+  colDivForLargeSize.append(largeFieldInput);
 
   const largeFieldLabel = document.createElement('label');
-  largeFieldLabel.for = 'large';
+  largeFieldLabel.setAttribute('for', 'large');
   largeFieldLabel.textContent = i18next.t('large');
-  fieldSizeDiv.append(largeFieldLabel);
+  colDivForLargeSize.append(largeFieldLabel);
+  rowDivForFieldSize.append(colDivForLargeSize);
 
+  const colDivForXlargeSize = document.createElement('div');
+  colDivForXlargeSize.classList.add('col-12', 'col-sm-3');
   const xLargeFieldInput = document.createElement('input');
   xLargeFieldInput.type = 'radio';
   xLargeFieldInput.value = '100';
   xLargeFieldInput.id = 'x-large';
   xLargeFieldInput.name = 'field-size';
-  fieldSizeDiv.append(xLargeFieldInput);
+  colDivForXlargeSize.append(xLargeFieldInput);
 
   const xLargeFieldLabel = document.createElement('label');
-  xLargeFieldLabel.for = 'x-large';
+  xLargeFieldLabel.setAttribute('for', 'x-large');
   xLargeFieldLabel.textContent = i18next.t('xLarge');
-  fieldSizeDiv.append(xLargeFieldLabel);
+  colDivForXlargeSize.append(xLargeFieldLabel);
+  rowDivForFieldSize.append(colDivForXlargeSize);
 
   settingsForm.append(fieldSizeDiv);
 
   const snakeSpeedDiv = document.createElement('div');
+  snakeSpeedDiv.classList.add('text-center', 'container');
   const snakeSpeedHeader = document.createElement('h3');
+  snakeSpeedHeader.classList.add('mt-3');
   snakeSpeedHeader.textContent = i18next.t('speed');
   snakeSpeedDiv.append(snakeSpeedHeader);
 
+  const rowDivForSnakeSpeed = document.createElement('div');
+  rowDivForSnakeSpeed.classList.add('row', 'justify-content-around', 'mt-3');
+  snakeSpeedDiv.append(rowDivForSnakeSpeed);
+
+  const colDivForSlowSpeed = document.createElement('div');
+  colDivForSlowSpeed.classList.add('col-12', 'col-sm-3');
   const slowSpeedInput = document.createElement('input');
   slowSpeedInput.type = 'radio';
   slowSpeedInput.value = '1000';
   slowSpeedInput.id = 'slow';
   slowSpeedInput.name = 'speed';
-  snakeSpeedDiv.append(slowSpeedInput);
+  colDivForSlowSpeed.append(slowSpeedInput);
 
   const slowSpeedLabel = document.createElement('label');
-  slowSpeedLabel.for = 'slow';
+  slowSpeedLabel.setAttribute('for', 'slow');
   slowSpeedLabel.textContent = i18next.t('slow');
-  snakeSpeedDiv.append(slowSpeedLabel);
+  colDivForSlowSpeed.append(slowSpeedLabel);
+  rowDivForSnakeSpeed.append(colDivForSlowSpeed);
 
+  const colDivForMediumSpeed = document.createElement('div');
+  colDivForMediumSpeed.classList.add('col-12', 'col-sm-3');
   const mediumSpeedInput = document.createElement('input');
   mediumSpeedInput.type = 'radio';
   mediumSpeedInput.value = '500';
   mediumSpeedInput.id = 'medium-speed';
   mediumSpeedInput.name = 'speed';
-  snakeSpeedDiv.append(mediumSpeedInput);
+  colDivForMediumSpeed.append(mediumSpeedInput);
 
   const mediumSpeedLabel = document.createElement('label');
-  mediumSpeedLabel.for = 'medium-speed';
+  mediumSpeedLabel.setAttribute('for', 'medium-speed');
   mediumSpeedLabel.textContent = i18next.t('mediumSpeed');
-  snakeSpeedDiv.append(mediumSpeedLabel);
+  colDivForMediumSpeed.append(mediumSpeedLabel);
+  rowDivForSnakeSpeed.append(colDivForMediumSpeed);
 
+  const colDivForLargeSpeed = document.createElement('div');
+  colDivForLargeSpeed.classList.add('col-12', 'col-sm-3');
   const fastSpeedInput = document.createElement('input');
   fastSpeedInput.type = 'radio';
   fastSpeedInput.value = '200';
   fastSpeedInput.id = 'fast';
   fastSpeedInput.name = 'speed';
-  snakeSpeedDiv.append(fastSpeedInput);
+  colDivForLargeSpeed.append(fastSpeedInput);
 
   const fastSpeedLabel = document.createElement('label');
-  fastSpeedLabel.for = 'fast';
+  fastSpeedLabel.setAttribute('for', 'fast');
   fastSpeedLabel.textContent = i18next.t('fast');
-  snakeSpeedDiv.append(fastSpeedLabel);
+  colDivForLargeSpeed.append(fastSpeedLabel);
+  rowDivForSnakeSpeed.append(colDivForLargeSpeed);
 
+  const colDivForXlargeSpeed = document.createElement('div');
+  colDivForXlargeSpeed.classList.add('col-12', 'col-sm-3');
   const veryFastSpeedInput = document.createElement('input');
   veryFastSpeedInput.type = 'radio';
   veryFastSpeedInput.value = '50';
   veryFastSpeedInput.id = 'very-fast';
   veryFastSpeedInput.name = 'speed';
-  snakeSpeedDiv.append(veryFastSpeedInput);
+  colDivForXlargeSpeed.append(veryFastSpeedInput);
 
   const veryFastSpeedLabel = document.createElement('label');
-  veryFastSpeedLabel.for = 'very-fast';
+  veryFastSpeedLabel.setAttribute('for', 'very-fast');
   veryFastSpeedLabel.textContent = i18next.t('veryFast');
-  snakeSpeedDiv.append(veryFastSpeedLabel);
+  colDivForXlargeSpeed.append(veryFastSpeedLabel);
+  rowDivForSnakeSpeed.append(colDivForXlargeSpeed);
 
   settingsForm.append(snakeSpeedDiv);
 
   const submitButtonDiv = document.createElement('div');
+  submitButtonDiv.classList.add('text-center', 'mt-3');
   const submitButton = document.createElement('button');
   submitButton.type = 'submit';
   submitButton.textContent = i18next.t('play');

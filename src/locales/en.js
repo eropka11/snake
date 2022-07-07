@@ -12,5 +12,9 @@ export default {
     fast: 'Fast',
     veryFast: 'Very fast',
     play: 'Play',
+    errors: {
+      fieldSizeNotChoosed: 'Choose field size',
+      snakeSpeedNotChoosed: 'Choose snake speed',
+    },
   },
 };

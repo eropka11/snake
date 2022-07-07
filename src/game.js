@@ -1,5 +1,8 @@
 import _ from 'lodash';
 import onChange from 'on-change';
+import i18next from 'i18next';
+import ru from './locales/ru.js';
+import en from './locales/en.js';
 import render from './render.js';
 
 export default () => {
@@ -9,6 +12,7 @@ export default () => {
       speed: '',
       cells: [],
     },
+    error: '',
     language: '',
     finalScore: '',
     coordinatesToUpdate: '',
@@ -261,12 +265,34 @@ export default () => {
   languageButtons.forEach((button) => {
     button.addEventListener('click', () => {
       watchedState.language = button.id;
+
+      i18next.init({
+        lng: state.language,
+        debug: true,
+        resources: {
+          ru,
+          en,
+        },
+      });
+
       const settingsForm = document.querySelector('form');
       settingsForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
         const settingsFormData = new FormData(settingsForm);
         const difficulty = Number(settingsFormData.get('field-size'));
         const speed = Number(settingsFormData.get('speed'));
+
+        if (difficulty === 0) {
+          watchedState.error = i18next.t('errors.fieldSizeNotChoosed');
+          return;
+        }
+
+        if (speed === 0) {
+          watchedState.error = i18next.t('errors.snakeSpeedNotChoosed');
+          return;
+        }
+
         watchedState.field.difficulty = difficulty;
         watchedState.field.speed = speed;
 
