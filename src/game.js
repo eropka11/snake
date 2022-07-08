@@ -72,19 +72,48 @@ export default () => {
 
   let movingTimeout;
 
-  const moveUp = (head) => {
+  const mover = (head, direction) => {
     const nextHeadPosition = {
-      row: head.row - 1,
-      column: head.column,
       currentDirection: head.nextDirection,
       nextDirection: head.nextDirection,
-      previousDirection: head.currentDirection,
     };
     const tail = state.tailPosition;
-    const nextHeadIndex = findIndex(nextHeadPosition);
-    if (head.row < 2 || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.finalScore = state.scoreCounter;
-      return;
+    let nextHeadIndex;
+    if (direction === 'up') {
+      nextHeadPosition.row = head.row - 1;
+      nextHeadPosition.column = head.column;
+      nextHeadIndex = findIndex(nextHeadPosition);
+      if (head.row < 2 || state.field.cells[nextHeadIndex].content === 'body') {
+        watchedState.finalScore = state.scoreCounter;
+        return;
+      }
+    }
+    if (direction === 'down') {
+      nextHeadPosition.row = head.row + 1;
+      nextHeadPosition.column = head.column;
+      nextHeadIndex = findIndex(nextHeadPosition);
+      if (head.row === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
+        watchedState.finalScore = state.scoreCounter;
+        return;
+      }
+    }
+    if (direction === 'left') {
+      nextHeadPosition.row = head.row;
+      nextHeadPosition.column = head.column - 1;
+      nextHeadIndex = findIndex(nextHeadPosition);
+      if (head.column < 2 || state.field.cells[nextHeadIndex].content === 'body') {
+        watchedState.finalScore = state.scoreCounter;
+        return;
+      }
+    }
+    if (direction === 'right') {
+      nextHeadPosition.row = head.row;
+      nextHeadPosition.column = head.column + 1;
+      nextHeadIndex = findIndex(nextHeadPosition);
+      if (head.column === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
+        watchedState.finalScore = state.scoreCounter;
+        return;
+      }
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
       const headIndex = findIndex(head);
@@ -101,9 +130,9 @@ export default () => {
       }
       watchedState.newHeadPosition = nextHeadPosition;
       watchedState.tailPosition = newTailPosition;
-      watchedState.currentMovementDirection = 'up';
+      watchedState.currentMovementDirection = direction;
       watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveUp, state.field.speed, nextHeadPosition);
+      movingTimeout = window.setTimeout(mover, state.field.speed, nextHeadPosition, direction);
     }
     if (state.field.cells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition();
@@ -113,151 +142,10 @@ export default () => {
       fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
       fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
       watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.currentMovementDirection = 'up';
+      watchedState.currentMovementDirection = direction;
       watchedState.bodyCoordinates.unshift(head);
       watchedState.scoreCounter += 1;
-      movingTimeout = window.setTimeout(moveUp, state.field.speed, nextHeadPosition);
-    }
-  };
-
-  const moveDown = (head) => {
-    const nextHeadPosition = {
-      row: head.row + 1,
-      column: head.column,
-      currentDirection: head.nextDirection,
-      nextDirection: head.nextDirection,
-    };
-    const tail = state.tailPosition;
-    const nextHeadIndex = findIndex(nextHeadPosition);
-    if (head.row === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.finalScore = state.scoreCounter;
-      return;
-    }
-    if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const headIndex = findIndex(head);
-      watchedState.bodyCoordinates.unshift(head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      const newTailPosition = _.last(state.bodyCoordinates);
-      fieldUpdater(headIndex, 'tail', newTailPosition, tail);
-      const tailIndex = findIndex(tail);
-      watchedState.field.cells[tailIndex].content = 'empty';
-      if (state.bodyCoordinates.length > 1) {
-        fieldUpdater(headIndex, 'body', head);
-      } else {
-        watchedState.field.cells[headIndex].content = 'empty';
-      }
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.tailPosition = newTailPosition;
-      watchedState.currentMovementDirection = 'down';
-      watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveDown, state.field.speed, nextHeadPosition);
-    }
-    if (state.field.cells[nextHeadIndex].content === 'food') {
-      const nextFoodPosition = generateFoodPosition();
-      const nextFoodIndex = findIndex(nextFoodPosition);
-      const headIndex = findIndex(head);
-      fieldUpdater(headIndex, 'addBody', head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.currentMovementDirection = 'down';
-      watchedState.bodyCoordinates.unshift(head);
-      watchedState.scoreCounter += 1;
-      movingTimeout = window.setTimeout(moveDown, state.field.speed, nextHeadPosition);
-    }
-  };
-
-  const moveLeft = (head) => {
-    const nextHeadPosition = {
-      row: head.row,
-      column: head.column - 1,
-      currentDirection: head.nextDirection,
-      nextDirection: head.nextDirection,
-    };
-    const tail = state.tailPosition;
-    const nextHeadIndex = findIndex(nextHeadPosition);
-    if (head.column < 2 || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.finalScore = state.scoreCounter;
-      return;
-    }
-    if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const headIndex = findIndex(head);
-      watchedState.bodyCoordinates.unshift(head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      const newTailPosition = _.last(state.bodyCoordinates);
-      fieldUpdater(headIndex, 'tail', newTailPosition, tail);
-      const tailIndex = findIndex(tail);
-      watchedState.field.cells[tailIndex].content = 'empty';
-      if (state.bodyCoordinates.length > 1) {
-        fieldUpdater(headIndex, 'body', head);
-      } else {
-        watchedState.field.cells[headIndex].content = 'empty';
-      }
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.tailPosition = newTailPosition;
-      watchedState.currentMovementDirection = 'left';
-      watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveLeft, state.field.speed, nextHeadPosition);
-    }
-    if (state.field.cells[nextHeadIndex].content === 'food') {
-      const nextFoodPosition = generateFoodPosition();
-      const nextFoodIndex = findIndex(nextFoodPosition);
-      const headIndex = findIndex(head);
-      fieldUpdater(headIndex, 'addBody', head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.currentMovementDirection = 'left';
-      watchedState.bodyCoordinates.unshift(head);
-      watchedState.scoreCounter += 1;
-      movingTimeout = window.setTimeout(moveLeft, state.field.speed, nextHeadPosition);
-    }
-  };
-
-  const moveRight = (head) => {
-    const nextHeadPosition = {
-      row: head.row,
-      column: head.column + 1,
-      currentDirection: head.nextDirection,
-      nextDirection: head.nextDirection,
-    };
-    const tail = state.tailPosition;
-    const nextHeadIndex = findIndex(nextHeadPosition);
-    if (head.column === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
-      watchedState.finalScore = state.scoreCounter;
-      return;
-    }
-    if (state.field.cells[nextHeadIndex].content === 'empty') {
-      const headIndex = findIndex(head);
-      watchedState.bodyCoordinates.unshift(head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      const newTailPosition = _.last(state.bodyCoordinates);
-      fieldUpdater(headIndex, 'tail', newTailPosition, tail);
-      const tailIndex = findIndex(tail);
-      watchedState.field.cells[tailIndex].content = 'empty';
-      if (state.bodyCoordinates.length > 1) {
-        fieldUpdater(headIndex, 'body', head);
-      } else {
-        watchedState.field.cells[headIndex].content = 'empty';
-      }
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.tailPosition = newTailPosition;
-      watchedState.currentMovementDirection = 'right';
-      watchedState.bodyCoordinates.pop();
-      movingTimeout = window.setTimeout(moveRight, state.field.speed, nextHeadPosition);
-    }
-    if (state.field.cells[nextHeadIndex].content === 'food') {
-      const nextFoodPosition = generateFoodPosition();
-      const nextFoodIndex = findIndex(nextFoodPosition);
-      const headIndex = findIndex(head);
-      fieldUpdater(headIndex, 'addBody', head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.currentMovementDirection = 'right';
-      watchedState.bodyCoordinates.unshift(head);
-      watchedState.scoreCounter += 1;
-      movingTimeout = window.setTimeout(moveRight, state.field.speed, nextHeadPosition);
+      movingTimeout = window.setTimeout(mover, state.field.speed, nextHeadPosition, direction);
     }
   };
 
@@ -318,7 +206,7 @@ export default () => {
         const tailIndex = findIndex(tailPosition);
         fieldUpdater(tailIndex, 'tail', tailPosition, null);
 
-        moveUp(headPosition);
+        mover(headPosition, 'up');
 
         window.addEventListener('keydown', (event) => {
           switch (event.code) {
@@ -328,9 +216,10 @@ export default () => {
                 window.clearTimeout(movingTimeout);
                 watchedState.newHeadPosition.nextDirection = 'down';
                 movingTimeout = window.setTimeout(
-                  moveDown,
+                  mover,
                   state.field.speed / 2,
                   state.newHeadPosition,
+                  'down',
                 );
               }
               break;
@@ -340,9 +229,10 @@ export default () => {
                 window.clearTimeout(movingTimeout);
                 watchedState.newHeadPosition.nextDirection = 'up';
                 movingTimeout = window.setTimeout(
-                  moveUp,
+                  mover,
                   state.field.speed / 2,
                   state.newHeadPosition,
+                  'up',
                 );
               }
               break;
@@ -352,9 +242,10 @@ export default () => {
                 window.clearTimeout(movingTimeout);
                 watchedState.newHeadPosition.nextDirection = 'left';
                 movingTimeout = window.setTimeout(
-                  moveLeft,
+                  mover,
                   state.field.speed / 2,
                   state.newHeadPosition,
+                  'left',
                 );
               }
               break;
@@ -364,9 +255,10 @@ export default () => {
                 window.clearTimeout(movingTimeout);
                 watchedState.newHeadPosition.nextDirection = 'right';
                 movingTimeout = window.setTimeout(
-                  moveRight,
+                  mover,
                   state.field.speed / 2,
                   state.newHeadPosition,
+                  'right',
                 );
               }
               break;
