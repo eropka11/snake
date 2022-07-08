@@ -63,7 +63,7 @@ export default () => {
     watchedState.coordinatesToUpdate = {
       nextCoordinate, content, currentCoordinate,
     };
-    if (content === 'addBody') {
+    if (content === 'body') {
       watchedState.field.cells[nextIndex].content = 'body';
     } else {
       watchedState.field.cells[nextIndex].content = content;
@@ -138,7 +138,7 @@ export default () => {
       const nextFoodPosition = generateFoodPosition();
       const nextFoodIndex = findIndex(nextFoodPosition);
       const headIndex = findIndex(head);
-      fieldUpdater(headIndex, 'addBody', head);
+      fieldUpdater(headIndex, 'body', head);
       fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
       fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
       watchedState.newHeadPosition = nextHeadPosition;
