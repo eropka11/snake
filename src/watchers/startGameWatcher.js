@@ -1,6 +1,7 @@
-import blackField from './images/emptyField.png';
+import onChange from 'on-change';
+import blackField from '../images/emptyField.png';
 
-export default (squareSideLength) => {
+const generateField = (squareSideLength) => {
   const gameField = document.createElement('div');
   gameField.classList.add('gameField');
 
@@ -28,3 +29,9 @@ export default (squareSideLength) => {
   gameZone.append(gameField);
   return gameZone;
 };
+
+export default (state) => onChange(state, (path, value) => {
+  const body = document.querySelector('body');
+  body.textContent = '';
+  body.append(generateField(value));
+});

@@ -1,21 +1,34 @@
 import _ from 'lodash';
-import onChange from 'on-change';
 import i18next from 'i18next';
 import ru from './locales/ru.js';
 import en from './locales/en.js';
-import render from './render.js';
+import languageWatcher from './watchers/languageWatcher.js';
+import errorsWatcher from './watchers/errorsWatcher.js';
+import startGameWatcher from './watchers/startGameWatcher.js';
+import endGameWatcher from './watchers/endGameWatcher.js';
+import headCoordinatesWatcher from './watchers/headCoordinatesWatcher.js';
+import foodCoordinatesWatcher from './watchers/foodCoordinatesWatcher.js';
+import bodyCoordinatesWatcher from './watchers/bodyCoordinatesWatcher.js';
+import tailCoordinatesWatcher from './watchers/tailCoordinatesWatcher.js';
 
 export default () => {
   const state = {
-    field: {
+    stateToRender: {
+      coordinatesToUpdate: {
+        head: '',
+        body: '',
+        tail: '',
+        food: '',
+      },
       difficulty: '',
+      error: '',
+      language: '',
+      finalScore: '',
+    },
+    field: {
       speed: '',
       cells: [],
     },
-    error: '',
-    language: '',
-    finalScore: '',
-    coordinatesToUpdate: '',
     currentMovementDirection: 'up',
     newMovementDirection: '',
     newHeadPosition: '',
@@ -24,9 +37,19 @@ export default () => {
     scoreCounter: 0,
   };
 
-  const watchedState = onChange(state, (path, value) => {
-    render(path, value);
-  });
+  const watchedState = (path, value) => {
+    const watchers = {
+      language: languageWatcher(state.stateToRender),
+      error: errorsWatcher(state.stateToRender),
+      difficulty: startGameWatcher(state.stateToRender),
+      finalScore: endGameWatcher(state.stateToRender),
+      head: headCoordinatesWatcher(state.stateToRender),
+      food: foodCoordinatesWatcher(state.stateToRender),
+      body: bodyCoordinatesWatcher(state.stateToRender),
+      tail: tailCoordinatesWatcher(state.stateToRender),
+    };
+    watchers[path][path] = value;
+  };
 
   const initiateState = (squareSideLength) => {
     for (let i = 1; i <= squareSideLength; i += 1) {
@@ -36,7 +59,7 @@ export default () => {
           column: k,
           content: 'empty',
         };
-        watchedState.field.cells.push(cell);
+        state.field.cells.push(cell);
       }
     }
   };
@@ -59,17 +82,6 @@ export default () => {
     row: position.row, column: position.column,
   });
 
-  const fieldUpdater = (nextIndex, content, nextCoordinate, currentCoordinate) => {
-    watchedState.coordinatesToUpdate = {
-      nextCoordinate, content, currentCoordinate,
-    };
-    if (content === 'body') {
-      watchedState.field.cells[nextIndex].content = 'body';
-    } else {
-      watchedState.field.cells[nextIndex].content = content;
-    }
-  };
-
   let movingTimeout;
 
   const mover = (head, direction) => {
@@ -79,72 +91,90 @@ export default () => {
     };
     const tail = state.tailPosition;
     let nextHeadIndex;
+
     if (direction === 'up') {
       nextHeadPosition.row = head.row - 1;
       nextHeadPosition.column = head.column;
       nextHeadIndex = findIndex(nextHeadPosition);
       if (head.row < 2 || state.field.cells[nextHeadIndex].content === 'body') {
-        watchedState.finalScore = state.scoreCounter;
+        watchedState('finalScore', state.scoreCounter);
         return;
       }
     }
+
     if (direction === 'down') {
       nextHeadPosition.row = head.row + 1;
       nextHeadPosition.column = head.column;
       nextHeadIndex = findIndex(nextHeadPosition);
-      if (head.row === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
-        watchedState.finalScore = state.scoreCounter;
+      if (head.row === state.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
+        watchedState('finalScore', state.scoreCounter);
         return;
       }
     }
+
     if (direction === 'left') {
       nextHeadPosition.row = head.row;
       nextHeadPosition.column = head.column - 1;
       nextHeadIndex = findIndex(nextHeadPosition);
       if (head.column < 2 || state.field.cells[nextHeadIndex].content === 'body') {
-        watchedState.finalScore = state.scoreCounter;
+        watchedState('finalScore', state.scoreCounter);
         return;
       }
     }
+
     if (direction === 'right') {
       nextHeadPosition.row = head.row;
       nextHeadPosition.column = head.column + 1;
       nextHeadIndex = findIndex(nextHeadPosition);
-      if (head.column === state.field.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
-        watchedState.finalScore = state.scoreCounter;
+      if (head.column === state.difficulty || state.field.cells[nextHeadIndex].content === 'body') {
+        watchedState('finalScore', state.scoreCounter);
         return;
       }
     }
     if (state.field.cells[nextHeadIndex].content === 'empty') {
       const headIndex = findIndex(head);
-      watchedState.bodyCoordinates.unshift(head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      const newTailPosition = _.last(state.bodyCoordinates);
-      fieldUpdater(headIndex, 'tail', newTailPosition, tail);
+      state.bodyCoordinates.unshift(head);
+
+      watchedState('head', { nextHeadPosition, head });
+      state.field.cells[nextHeadIndex].content = 'head';
+
+      const nextTailPosition = _.last(state.bodyCoordinates);
+      watchedState('tail', { nextTailPosition, tail });
+      state.field.cells[headIndex].content = 'tail';
       const tailIndex = findIndex(tail);
-      watchedState.field.cells[tailIndex].content = 'empty';
+      state.field.cells[tailIndex].content = 'empty';
+
       if (state.bodyCoordinates.length > 1) {
-        fieldUpdater(headIndex, 'body', head);
+        watchedState('body', { head });
+        state.field.cells[headIndex].content = 'body';
       } else {
-        watchedState.field.cells[headIndex].content = 'empty';
+        state.field.cells[headIndex].content = 'empty';
       }
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.tailPosition = newTailPosition;
-      watchedState.currentMovementDirection = direction;
-      watchedState.bodyCoordinates.pop();
+
+      state.newHeadPosition = nextHeadPosition;
+      state.tailPosition = nextTailPosition;
+      state.currentMovementDirection = direction;
+      state.bodyCoordinates.pop();
       movingTimeout = window.setTimeout(mover, state.field.speed, nextHeadPosition, direction);
     }
+
     if (state.field.cells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition();
       const nextFoodIndex = findIndex(nextFoodPosition);
-      const headIndex = findIndex(head);
-      fieldUpdater(headIndex, 'body', head);
-      fieldUpdater(nextHeadIndex, 'head', nextHeadPosition, head);
-      fieldUpdater(nextFoodIndex, 'food', nextFoodPosition);
-      watchedState.newHeadPosition = nextHeadPosition;
-      watchedState.currentMovementDirection = direction;
-      watchedState.bodyCoordinates.unshift(head);
-      watchedState.scoreCounter += 1;
+      const nextBodyIndex = findIndex(head);
+      watchedState('body', { head });
+      state.field.cells[nextBodyIndex].content = 'body';
+
+      watchedState('head', { nextHeadPosition, head });
+      state.field.cells[nextHeadIndex].content = 'head';
+      state.newHeadPosition = nextHeadPosition;
+
+      watchedState('food', { nextFoodPosition });
+      state.field.cells[nextFoodIndex].content = 'food';
+
+      state.currentMovementDirection = direction;
+      state.bodyCoordinates.unshift(head);
+      state.scoreCounter += 1;
       movingTimeout = window.setTimeout(mover, state.field.speed, nextHeadPosition, direction);
     }
   };
@@ -152,7 +182,7 @@ export default () => {
   const languageButtons = document.querySelectorAll('button');
   languageButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      watchedState.language = button.id;
+      watchedState('language', button.id);
 
       i18next.init({
         lng: state.language,
@@ -172,41 +202,44 @@ export default () => {
         const speed = Number(settingsFormData.get('speed'));
 
         if (difficulty === 0) {
-          watchedState.error = i18next.t('errors.fieldSizeNotChoosed');
+          watchedState('error', i18next.t('errors.fieldSizeNotChoosed'));
           return;
         }
 
         if (speed === 0) {
-          watchedState.error = i18next.t('errors.snakeSpeedNotChoosed');
+          watchedState('error', i18next.t('errors.snakeSpeedNotChoosed'));
           return;
         }
 
-        watchedState.field.difficulty = difficulty;
-        watchedState.field.speed = speed;
+        watchedState('difficulty', difficulty);
+        state.field.speed = speed;
 
         initiateState(difficulty);
-        const headPosition = generateHeadPosition(difficulty);
-        const tailPosition = {
-          row: headPosition.row,
-          column: headPosition.column,
-          currentDirection: headPosition.direction,
-          nextDirection: headPosition.direction,
+        const nextHeadPosition = generateHeadPosition(difficulty);
+        const nextTailPosition = {
+          row: nextHeadPosition.row,
+          column: nextHeadPosition.column,
+          currentDirection: nextHeadPosition.direction,
+          nextDirection: nextHeadPosition.direction,
           previousDirection: '',
         };
-        watchedState.tailPosition = tailPosition;
-        watchedState.newHeadPosition = headPosition;
-        const foodPosition = generateFoodPosition();
+        state.tailPosition = nextTailPosition;
+        state.newHeadPosition = nextHeadPosition;
+        const nextFoodPosition = generateFoodPosition();
 
-        const headIndex = findIndex(headPosition);
-        fieldUpdater(headIndex, 'head', headPosition, null);
+        const headIndex = findIndex(nextHeadPosition);
+        watchedState('head', { nextHeadPosition });
+        state.field.cells[headIndex].content = 'head';
 
-        const foodIndex = findIndex(foodPosition);
-        fieldUpdater(foodIndex, 'food', foodPosition);
+        const foodIndex = findIndex(nextFoodPosition);
+        watchedState('food', { nextFoodPosition });
+        state.field.cells[foodIndex].content = 'food';
 
-        const tailIndex = findIndex(tailPosition);
-        fieldUpdater(tailIndex, 'tail', tailPosition, null);
+        const tailIndex = findIndex(nextTailPosition);
+        watchedState('tail', { nextTailPosition });
+        state.field.cells[tailIndex].content = 'tail';
 
-        mover(headPosition, 'up');
+        mover(nextHeadPosition, 'up');
 
         window.addEventListener('keydown', (event) => {
           switch (event.code) {
@@ -214,7 +247,7 @@ export default () => {
             case 'ArrowDown':
               if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
                 window.clearTimeout(movingTimeout);
-                watchedState.newHeadPosition.nextDirection = 'down';
+                state.newHeadPosition.nextDirection = 'down';
                 movingTimeout = window.setTimeout(
                   mover,
                   state.field.speed / 2,
@@ -227,7 +260,7 @@ export default () => {
             case 'ArrowUp':
               if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
                 window.clearTimeout(movingTimeout);
-                watchedState.newHeadPosition.nextDirection = 'up';
+                state.newHeadPosition.nextDirection = 'up';
                 movingTimeout = window.setTimeout(
                   mover,
                   state.field.speed / 2,
@@ -240,7 +273,7 @@ export default () => {
             case 'ArrowLeft':
               if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
                 window.clearTimeout(movingTimeout);
-                watchedState.newHeadPosition.nextDirection = 'left';
+                state.newHeadPosition.nextDirection = 'left';
                 movingTimeout = window.setTimeout(
                   mover,
                   state.field.speed / 2,
@@ -253,7 +286,7 @@ export default () => {
             case 'ArrowRight':
               if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
                 window.clearTimeout(movingTimeout);
-                watchedState.newHeadPosition.nextDirection = 'right';
+                state.newHeadPosition.nextDirection = 'right';
                 movingTimeout = window.setTimeout(
                   mover,
                   state.field.speed / 2,

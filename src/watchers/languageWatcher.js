@@ -1,8 +1,9 @@
+import onChange from 'on-change';
 import i18next from 'i18next';
-import ru from './locales/ru.js';
-import en from './locales/en.js';
+import ru from '../locales/ru.js';
+import en from '../locales/en.js';
 
-export default (lang) => {
+const showSettings = (lang) => {
   i18next.init({
     lng: lang,
     debug: true,
@@ -179,3 +180,12 @@ export default (lang) => {
 
   return settingsForm;
 };
+
+export default (state) => onChange(state, (path, value) => {
+  const body = document.querySelector('body');
+  const languageSelectDiv = document.querySelector('div');
+  languageSelectDiv.remove();
+  const errorDiv = document.createElement('div');
+  errorDiv.classList.add('error');
+  body.append(showSettings(value), errorDiv);
+});
