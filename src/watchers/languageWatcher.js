@@ -172,6 +172,7 @@ const showSettings = (lang) => {
   const submitButtonDiv = document.createElement('div');
   submitButtonDiv.classList.add('text-center', 'mt-3');
   const submitButton = document.createElement('button');
+  submitButton.classList.add('btn', 'btn-primary');
   submitButton.type = 'submit';
   submitButton.textContent = i18next.t('play');
   submitButtonDiv.append(submitButton);
