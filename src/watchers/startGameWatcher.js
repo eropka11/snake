@@ -23,7 +23,6 @@ const generateField = (squareSideLength) => {
       row.append(cell);
     }
   }
-
   const gameZone = document.createElement('div');
   gameZone.classList.add('d-flex', 'justify-content-center');
   gameZone.append(gameField);

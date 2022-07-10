@@ -1,6 +1,21 @@
-.gameField {
-    height: 90vh;
-    width: 90vh;
+@media screen and (orientation: landscape) {
+    .gameField {
+        height: 95vh;
+        width: 95vh;
+        align-items: center;
+    }
+
+    body {
+        padding-top: 1%;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    .gameField {
+        height: 50vh;
+        width: 90vh;
+        align-items: center;
+    }
 }
 
 .row-10 {

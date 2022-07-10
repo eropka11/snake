@@ -28,6 +28,7 @@ export default () => {
       language: '',
       finalScore: '',
     },
+    isBodyReversed: false,
     fieldCells: '',
     speed: '',
     currentMovementDirection: 'up',
@@ -101,6 +102,7 @@ export default () => {
         return;
       }
     }
+
     if (state.fieldCells[nextHeadIndex].content === 'empty') {
       const headIndex = findIndex(head, state.fieldCells);
       state.bodyCoordinates.unshift(head);
@@ -115,7 +117,12 @@ export default () => {
       state.fieldCells[tailIndex].content = 'empty';
 
       if (state.bodyCoordinates.length > 1) {
-        watchedState('body', { head });
+        if (state.isBodyReversed) {
+          state.isBodyReversed = false;
+        } else {
+          state.isBodyReversed = true;
+        }
+        watchedState('body', { head, isReversed: state.isBodyReversed });
         state.fieldCells[headIndex].content = 'body';
       } else {
         state.fieldCells[headIndex].content = 'empty';
@@ -248,6 +255,7 @@ export default () => {
               }
               break;
             default:
+              break;
           }
         });
       });

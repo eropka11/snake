@@ -1,5 +1,6 @@
 import onChange from 'on-change';
 import snakeBody from '../images/snakeBody.png';
+import snakeBodyReversed from '../images/snakeBodyReversed.png';
 import snakeBodyTurned from '../images/snakeBodyTurned.png';
 
 export default (state) => onChange(state, (path, value) => {
@@ -7,8 +8,12 @@ export default (state) => onChange(state, (path, value) => {
     const newBodyPosition = document.querySelector(`[data-row="${value.head.row}"] > [data-column="${value.head.column}"]`);
     const bodyImage = document.createElement('img');
     if (value.head.nextDirection === value.head.currentDirection) {
-      bodyImage.src = snakeBody;
-      bodyImage.classList.add('d-block');
+      if (value.isReversed) {
+        bodyImage.src = snakeBody;
+      } else {
+        bodyImage.src = snakeBodyReversed;
+      }
+      bodyImage.classList.add('d-block', value.head.currentDirection);
     } else {
       switch (value.head.currentDirection) {
         case 'up':
