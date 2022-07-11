@@ -77,7 +77,7 @@ export default () => {
       nextHeadPosition.row = head.row + 1;
       nextHeadPosition.column = head.column;
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
-      if (head.row === state.difficulty || state.fieldCells[nextHeadIndex].content === 'body') {
+      if (head.row === state.stateToRender.difficulty || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
         return;
       }
@@ -97,7 +97,7 @@ export default () => {
       nextHeadPosition.row = head.row;
       nextHeadPosition.column = head.column + 1;
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
-      if (head.column === state.difficulty || state.fieldCells[nextHeadIndex].content === 'body') {
+      if (head.column === state.stateToRender.difficulty || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
         return;
       }
