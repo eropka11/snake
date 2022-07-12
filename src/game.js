@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import i18next from 'i18next';
+import Hammer from 'hammerjs';
 import ru from './locales/ru.js';
 import en from './locales/en.js';
 import languageWatcher from './watchers/languageWatcher.js';
@@ -230,28 +231,27 @@ export default () => {
         };
 
         const gameField = document.querySelector('.gameField');
-        gameField.addEventListener('touchstart', (event) => {
-          event.preventDefault();
-          const touchedDiv = event.target.parentElement;
-          switch (state.currentMovementDirection) {
-            case 'up':
-            case 'down':
-              if (touchedDiv.dataset.column > state.newHeadPosition.column) {
-                movingChanger('right');
-              } else {
-                movingChanger('left');
-              }
-              break;
-            case 'right':
-            case 'left':
-              if (touchedDiv.dataset.row > state.newHeadPosition.row) {
-                movingChanger('down');
-              } else {
-                movingChanger('up');
-              }
-              break;
-            default:
-              break;
+        const hammerManager = new Hammer.Manager(gameField);
+        const swipe = new Hammer.Swipe();
+        hammerManager.add(swipe);
+        hammerManager.on('swipeleft', () => {
+          if (state.currentMovementDirection === 'up' || state.currentMovementDirection === 'down') {
+            movingChanger('left');
+          }
+        });
+        hammerManager.on('swiperight', () => {
+          if (state.currentMovementDirection === 'up' || state.currentMovementDirection === 'down') {
+            movingChanger('right');
+          }
+        });
+        hammerManager.on('swipeup', () => {
+          if (state.currentMovementDirection === 'left' || state.currentMovementDirection === 'right') {
+            movingChanger('up');
+          }
+        });
+        hammerManager.on('swipedown', () => {
+          if (state.currentMovementDirection === 'left' || state.currentMovementDirection === 'right') {
+            movingChanger('down');
           }
         });
 
