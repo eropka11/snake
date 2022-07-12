@@ -218,17 +218,44 @@ export default () => {
 
         mover(nextHeadPosition, 'up');
 
+        const movingChanger = (newDirection) => {
+          window.clearTimeout(movingTimeout);
+          state.newHeadPosition.nextDirection = newDirection;
+          movingTimeout = window.setTimeout(
+            mover,
+            state.speed / 2,
+            state.newHeadPosition,
+            newDirection,
+          );
+        };
+
+        const gameField = document.querySelector('.gameField');
+        gameField.addEventListener('touchstart', (event) => {
+          event.preventDefault();
+          const touchedDiv = event.target.parentElement;
+          switch (state.currentMovementDirection) {
+            case 'up':
+            case 'down':
+              if (touchedDiv.dataset.column > state.newHeadPosition.column) {
+                movingChanger('right');
+              } else {
+                movingChanger('left');
+              }
+              break;
+            case 'right':
+            case 'left':
+              if (touchedDiv.dataset.row > state.newHeadPosition.row) {
+                movingChanger('down');
+              } else {
+                movingChanger('up');
+              }
+              break;
+            default:
+              break;
+          }
+        });
+
         window.addEventListener('keydown', (event) => {
-          const movingChanger = (newDirection) => {
-            window.clearTimeout(movingTimeout);
-            state.newHeadPosition.nextDirection = newDirection;
-            movingTimeout = window.setTimeout(
-              mover,
-              state.speed / 2,
-              state.newHeadPosition,
-              newDirection,
-            );
-          };
           switch (event.code) {
             case 'KeyS':
             case 'ArrowDown':
