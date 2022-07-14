@@ -163,7 +163,7 @@ export default () => {
       watchedState('language', button.id);
 
       i18next.init({
-        lng: state.language,
+        lng: state.stateToRender.language,
         debug: true,
         resources: {
           ru,

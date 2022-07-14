@@ -1,6 +1,9 @@
 import onChange from 'on-change';
 import blackField from '../images/emptyField.png';
 import snakeTail from '../images/snakeTail.png';
+import snakeTailRight from '../images/snakeTailRight.png';
+import snakeTailLeft from '../images/snakeTailLeft.png';
+import snakeTailDown from '../images/snakeTailDown.png';
 
 export default (state) => onChange(state, (path, value) => {
   if (value.tail !== undefined) {
@@ -13,11 +16,23 @@ export default (state) => onChange(state, (path, value) => {
   }
   const newTailPosition = document.querySelector(`[data-row="${value.nextTailPosition.row}"] > [data-column="${value.nextTailPosition.column}"]`);
   const tailImage = document.createElement('img');
-  tailImage.src = snakeTail;
-  if (tailImage.classList.contains(value.nextTailPosition.previousDirection)) {
-    tailImage.classList.remove(value.nextTailPosition.previousDirection);
+  switch (value.nextTailPosition.nextDirection) {
+    case 'up':
+      tailImage.src = snakeTail;
+      break;
+    case 'right':
+      tailImage.src = snakeTailRight;
+      break;
+    case 'left':
+      tailImage.src = snakeTailLeft;
+      break;
+    case 'down':
+      tailImage.src = snakeTailDown;
+      break;
+    default:
+      break;
   }
-  tailImage.classList.add('d-block', value.nextTailPosition.nextDirection);
+  tailImage.classList.add('d-block');
   newTailPosition.lastChild.remove();
   newTailPosition.append(tailImage);
 });

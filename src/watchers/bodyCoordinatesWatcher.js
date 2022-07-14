@@ -1,55 +1,83 @@
 import onChange from 'on-change';
 import snakeBody from '../images/snakeBody.png';
+import snakeBodyRight from '../images/snakeBodyRight.png';
+import snakeBodyLeft from '../images/snakeBodyLeft.png';
+import snakeBodyDown from '../images/snakeBodyDown.png';
 import snakeBodyReversed from '../images/snakeBodyReversed.png';
-import snakeBodyTurned from '../images/snakeBodyTurned.png';
+import snakeBodyRightReversed from '../images/snakeBodyRightReversed.png';
+import snakeBodyLeftReversed from '../images/snakeBodyLeftReversed.png';
+import snakeBodyDownReversed from '../images/snakeBodyDownReversed.png';
+import snakeBodyDownLeft from '../images/snakeBodyDownLeft.png';
+import snakeBodyDownRight from '../images/snakeBodyDownRight.png';
+import snakeBodyUpRight from '../images/snakeBodyUpRight.png';
+import snakeBodyUpLeft from '../images/snakeBodyUpLeft.png';
 
 export default (state) => onChange(state, (path, value) => {
   if (value.head !== undefined) {
     const newBodyPosition = document.querySelector(`[data-row="${value.head.row}"] > [data-column="${value.head.column}"]`);
     const bodyImage = document.createElement('img');
+    bodyImage.classList.add('d-block');
     if (value.head.nextDirection === value.head.currentDirection) {
-      if (value.isReversed) {
-        bodyImage.src = snakeBody;
-      } else {
-        bodyImage.src = snakeBodyReversed;
+      switch (value.head.currentDirection) {
+        case 'up':
+          if (value.isReversed) {
+            bodyImage.src = snakeBody;
+          } else {
+            bodyImage.src = snakeBodyReversed;
+          }
+          break;
+        case 'right':
+          if (value.isReversed) {
+            bodyImage.src = snakeBodyRight;
+          } else {
+            bodyImage.src = snakeBodyRightReversed;
+          }
+          break;
+        case 'left':
+          if (value.isReversed) {
+            bodyImage.src = snakeBodyLeft;
+          } else {
+            bodyImage.src = snakeBodyLeftReversed;
+          }
+          break;
+        case 'down':
+          if (value.isReversed) {
+            bodyImage.src = snakeBodyDown;
+          } else {
+            bodyImage.src = snakeBodyDownReversed;
+          }
+          break;
+        default:
+          break;
       }
-      bodyImage.classList.add('d-block', value.head.currentDirection);
     } else {
       switch (value.head.currentDirection) {
         case 'up':
           if (value.head.nextDirection === 'left') {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'downLeft');
+            bodyImage.src = snakeBodyDownLeft;
           } else {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'downRight');
+            bodyImage.src = snakeBodyDownRight;
           }
           break;
         case 'down':
           if (value.head.nextDirection === 'left') {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'upLeft');
+            bodyImage.src = snakeBodyUpLeft;
           } else {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'upRight');
+            bodyImage.src = snakeBodyUpRight;
           }
           break;
         case 'left':
           if (value.head.nextDirection === 'down') {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'downRight');
+            bodyImage.src = snakeBodyDownRight;
           } else {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'upRight');
+            bodyImage.src = snakeBodyUpRight;
           }
           break;
         case 'right':
           if (value.head.nextDirection === 'down') {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'downLeft');
+            bodyImage.src = snakeBodyDownLeft;
           } else {
-            bodyImage.src = snakeBodyTurned;
-            bodyImage.classList.add('d-block', 'upLeft');
+            bodyImage.src = snakeBodyUpLeft;
           }
           break;
         default:
