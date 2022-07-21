@@ -35,6 +35,13 @@ export default (state) => onChange(state, (path, value) => {
   body.textContent = '';
   const gameZone = generateField(value);
   body.append(gameZone);
-  window.scrollTo(0, document.body.scrollHeight);
-  body.requestFullscreen();
+  if (body.requestFullscreen) {
+    body.requestFullscreen();
+  }
+  if (body.webkitRequestFullscreen) {
+    body.webkitRequestFullscreen();
+  }
+  if (body.mozRequestFullScreen) {
+    body.mozRequestFullScreen();
+  }
 });
