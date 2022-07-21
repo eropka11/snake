@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import i18next from 'i18next';
 import Hammer from 'hammerjs';
-import ru from './locales/ru.js';
-import en from './locales/en.js';
 import languageWatcher from './watchers/languageWatcher.js';
 import errorsWatcher from './watchers/errorsWatcher.js';
 import startGameWatcher from './watchers/startGameWatcher.js';
@@ -24,7 +22,11 @@ export default () => {
         tail: '',
         food: '',
       },
-      difficulty: '',
+      fieldParameters: {
+        rowsAmount: '',
+        columnsAmount: '',
+        minValue: '',
+      },
       error: '',
       language: '',
       finalScore: '',
@@ -78,7 +80,7 @@ export default () => {
       nextHeadPosition.row = head.row + 1;
       nextHeadPosition.column = head.column;
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
-      if (head.row === state.stateToRender.difficulty || state.fieldCells[nextHeadIndex].content === 'body') {
+      if (head.row === state.stateToRender.difficulty.rowsAmount || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
         return;
       }
@@ -89,7 +91,7 @@ export default () => {
       nextHeadPosition.column = head.column - 1;
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
       if (head.column < 2 || state.fieldCells[nextHeadIndex].content === 'body') {
-        watchedState('finalScore', state.scoreCounter);
+        // watchedState('finalScore', state.scoreCounter);
         return;
       }
     }
@@ -98,7 +100,7 @@ export default () => {
       nextHeadPosition.row = head.row;
       nextHeadPosition.column = head.column + 1;
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
-      if (head.column === state.stateToRender.difficulty || state.fieldCells[nextHeadIndex].content === 'body') {
+      if (head.column === state.stateToRender.difficulty.columnsAmount || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
         return;
       }
@@ -162,15 +164,6 @@ export default () => {
     button.addEventListener('click', () => {
       watchedState('language', button.id);
 
-      i18next.init({
-        lng: state.stateToRender.language,
-        debug: true,
-        resources: {
-          ru,
-          en,
-        },
-      });
-
       const settingsForm = document.querySelector('form');
       settingsForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -189,11 +182,26 @@ export default () => {
           return;
         }
 
-        watchedState('difficulty', difficulty);
+        const screenWidth = window.screen.width;
+        const screenHeight = window.screen.height;
+        const fieldParameters = { minValue: difficulty };
+
+        if (screenWidth > screenHeight) {
+          fieldParameters.columnsAmount = Math.floor((screenWidth / screenHeight) * difficulty);
+          fieldParameters.rowsAmount = difficulty;
+        } else if (screenWidth < screenHeight) {
+          fieldParameters.columnsAmount = difficulty;
+          fieldParameters.rowsAmount = Math.floor((screenHeight / screenWidth) * difficulty);
+        } else {
+          fieldParameters.rowsAmount = difficulty;
+          fieldParameters.columnsAmount = difficulty;
+        }
+
+        watchedState('difficulty', fieldParameters);
         state.speed = speed;
 
-        state.fieldCells = initiateState(difficulty);
-        const nextHeadPosition = generateHeadPosition(difficulty);
+        state.fieldCells = initiateState(fieldParameters);
+        const nextHeadPosition = generateHeadPosition(fieldParameters);
         const nextTailPosition = {
           row: nextHeadPosition.row,
           column: nextHeadPosition.column,

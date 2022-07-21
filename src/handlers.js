@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-const initiateState = (squareSideLength) => {
+const initiateState = (fieldParameters) => {
   const cells = [];
-  for (let i = 1; i <= squareSideLength; i += 1) {
-    for (let k = 1; k <= squareSideLength; k += 1) {
+  for (let i = 1; i <= fieldParameters.rowsAmount; i += 1) {
+    for (let k = 1; k <= fieldParameters.columnsAmount; k += 1) {
       const cell = {
         row: i,
         column: k,
@@ -15,9 +15,9 @@ const initiateState = (squareSideLength) => {
   return cells;
 };
 
-const generateHeadPosition = (sideLength) => {
-  const row = Math.floor(Math.random() * (sideLength - 3) + 3);
-  const column = Math.floor(Math.random() * (sideLength - 3) + 3);
+const generateHeadPosition = (fieldParameters) => {
+  const row = Math.floor(Math.random() * (fieldParameters.rowsAmount - 3) + 3);
+  const column = Math.floor(Math.random() * (fieldParameters.columnsAmount - 3) + 3);
   return {
     row, column, currentDirection: 'up', nextDirection: 'up', previousDirection: '',
   };
