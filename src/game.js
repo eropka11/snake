@@ -91,7 +91,7 @@ export default () => {
       nextHeadPosition.column = head.column - 1;
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
       if (head.column < 2 || state.fieldCells[nextHeadIndex].content === 'body') {
-        // watchedState('finalScore', state.scoreCounter);
+        watchedState('finalScore', state.scoreCounter);
         return;
       }
     }
