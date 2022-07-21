@@ -182,8 +182,8 @@ export default () => {
           return;
         }
 
-        const screenWidth = window.screen.width;
-        const screenHeight = window.screen.height;
+        const screenWidth = window.screen.innerWidth;
+        const screenHeight = window.screen.innerHeight;
         const fieldParameters = { minValue: difficulty };
 
         if (screenWidth > screenHeight) {

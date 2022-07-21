@@ -35,5 +35,4 @@ export default (state) => onChange(state, (path, value) => {
   body.textContent = '';
   const gameZone = generateField(value);
   body.append(gameZone);
-  gameZone.requestFullscreen();
 });
