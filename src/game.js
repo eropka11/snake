@@ -182,9 +182,10 @@ export default () => {
           return;
         }
 
-        const screenWidth = window.screen.availWidth;
-        const screenHeight = window.screen.availHeight;
+        const screenWidth = document.documentElement.clientWidth;
+        const screenHeight = document.documentElement.clientHeight;
         const fieldParameters = { minValue: difficulty };
+        console.log(screenWidth, screenHeight);
 
         if (screenWidth > screenHeight) {
           fieldParameters.columnsAmount = Math.floor((screenWidth / screenHeight) * difficulty);
