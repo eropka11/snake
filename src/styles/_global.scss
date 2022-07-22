@@ -13,67 +13,20 @@ body {
     align-items: center;
 }
 
-@media screen and (orientation: landscape) {
-    .gameField {
-        height: 95vh;
-        display: flex;
-        flex-direction: column;
-        flex-shrink: 1;
-    }
-
-    .cell-10 {
-        height: 100%;
-    }
-
-    .cell-25 {
-        height: 100%;
-    }
-    
-    .cell-50 {
-        height: 100%;
-    }
-    
-    .cell-100 {
-        height: 100%;
-    }
+.cell-10 {
+    height: 100%;
 }
 
-@media screen and (orientation: portrait) {
-    .gameField {
-        height: 100%;
-        width: 95vh;
-        flex-direction: column;
-        flex-shrink: 1;
-    }
+.cell-25 {
+    height: 100%;
+}
 
-    .game-zone {
-        min-height: 100vh;
-        margin: 0px;
-        padding: 0px;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-    }
+.cell-50 {
+    height: 100%;
+}
 
-    .cell-10 {
-        height: 100%;
-        width: 10%;
-    }
-
-    .cell-25 {
-        height: 100%;
-        width: 4%;
-    }
-    
-    .cell-50 {
-        height: 100%;
-        width: 2%;
-    }
-    
-    .cell-100 {
-        height: 100%;
-        width: 1%;
-    }
+.cell-100 {
+    height: 100%;
 }
 
 .row-10 {
@@ -103,4 +56,42 @@ body {
 img {
     height: 100%;
     width: 100%;
+}
+
+@media screen and (orientation: landscape) {
+    .gameField {
+        height: 95vh;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 1;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    .gameField {
+        height: 100%;
+        width: 95vh;
+        flex-direction: column;
+        flex-shrink: 1;
+    }
+
+    .game-zone {
+        align-items: flex-start;
+    }
+
+    .cell-10 {
+        width: 10%;
+    }
+
+    .cell-25 {
+        width: 4%;
+    }
+    
+    .cell-50 {
+        width: 2%;
+    }
+    
+    .cell-100 {
+        width: 1%;
+    }
 }
