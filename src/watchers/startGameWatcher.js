@@ -35,6 +35,13 @@ export default (state) => onChange(state, (path, value) => {
   body.textContent = '';
   const gameZone = generateField(value);
   body.append(gameZone);
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  if (body.requestFullscreen) {
+    body.requestFullscreen();
+  }
+  if (body.webkitEnterFullscreen) {
+    body.webkitEnterFullscreen();
+  }
+  if (body.mozRequestFullScreen) {
+    body.mozRequestFullScreen();
+  }
 });

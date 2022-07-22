@@ -39,19 +39,20 @@ body {
 }
 
 @media screen and (orientation: portrait) {
-    body {
-        height: 100vh;
-        height: calc(var(--vh, 1vh) * 100);
-        margin: 0px;
-        padding: 0px;
-    }
-
     .gameField {
         height: 100%;
         width: 95vh;
         align-items: center;
         flex-direction: column;
         flex-shrink: 1;
+    }
+
+    .game-zone {
+        min-height: 100vh;
+        margin: 0px;
+        padding: 0px;
+        display: flex;
+        justify-content: center;
     }
 
     .cell-10 {
