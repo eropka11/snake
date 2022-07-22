@@ -47,11 +47,12 @@ body {
     }
 
     .game-zone {
-        min-height: 95vh;
+        min-height: 100vh;
         margin: 0px;
         padding: 0px;
         display: flex;
         justify-content: center;
+        align-items: flex-start;
     }
 
     .cell-10 {
