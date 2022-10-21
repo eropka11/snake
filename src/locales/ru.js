@@ -12,6 +12,9 @@ export default {
     fast: 'Просто быстро',
     veryFast: 'Очень быстро',
     play: 'Играть',
+    restart: 'Играть снова',
+    settings: 'Настройки',
+    yourScore: 'Твой счёт',
     errors: {
       fieldSizeNotChoosed: 'Укажите размер поля',
       snakeSpeedNotChoosed: 'Укажите скорость змейки',

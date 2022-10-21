@@ -12,6 +12,9 @@ export default {
     fast: 'Fast',
     veryFast: 'Very fast',
     play: 'Play',
+    restart: 'Play again',
+    settings: 'Settings',
+    yourScore: 'Your score',
     errors: {
       fieldSizeNotChoosed: 'Choose field size',
       snakeSpeedNotChoosed: 'Choose snake speed',

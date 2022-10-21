@@ -1,32 +1,20 @@
 import onChange from 'on-change';
-import i18next from 'i18next';
-import ru from '../locales/ru.js';
-import en from '../locales/en.js';
 
 const showSettings = (lang) => {
-  i18next.init({
-    lng: lang,
-    debug: true,
-    resources: {
-      ru,
-      en,
-    },
-  });
-
-  const settingsForm = document.createElement('form');
+  const settingsForm = document.querySelector('form');
 
   const chooseDifficultDiv = document.createElement('div');
   chooseDifficultDiv.classList.add('text-center');
   const chooseDifficultHeader = document.createElement('h2');
   chooseDifficultHeader.classList.add('mt-3');
-  chooseDifficultHeader.textContent = i18next.t('chooseDifficult');
+  chooseDifficultHeader.textContent = lang('chooseDifficult');
   chooseDifficultDiv.append(chooseDifficultHeader);
   settingsForm.append(chooseDifficultDiv);
 
   const fieldSizeDiv = document.createElement('div');
   fieldSizeDiv.classList.add('text-center', 'container');
   const fieldSizeHeader = document.createElement('h3');
-  fieldSizeHeader.textContent = i18next.t('fieldSize');
+  fieldSizeHeader.textContent = lang('fieldSize');
   fieldSizeHeader.classList.add('mt-3');
   fieldSizeDiv.append(fieldSizeHeader);
 
@@ -45,7 +33,7 @@ const showSettings = (lang) => {
 
   const smallFieldLabel = document.createElement('label');
   smallFieldLabel.setAttribute('for', 'small');
-  smallFieldLabel.textContent = i18next.t('small');
+  smallFieldLabel.textContent = lang('small');
   colDivForSmallSize.append(smallFieldLabel);
   rowDivForFieldSize.append(colDivForSmallSize);
 
@@ -60,7 +48,7 @@ const showSettings = (lang) => {
 
   const mediumFieldLabel = document.createElement('label');
   mediumFieldLabel.setAttribute('for', 'medium-size');
-  mediumFieldLabel.textContent = i18next.t('mediumSize');
+  mediumFieldLabel.textContent = lang('mediumSize');
   colDivForMediumSize.append(mediumFieldLabel);
   rowDivForFieldSize.append(colDivForMediumSize);
 
@@ -75,7 +63,7 @@ const showSettings = (lang) => {
 
   const largeFieldLabel = document.createElement('label');
   largeFieldLabel.setAttribute('for', 'large');
-  largeFieldLabel.textContent = i18next.t('large');
+  largeFieldLabel.textContent = lang('large');
   colDivForLargeSize.append(largeFieldLabel);
   rowDivForFieldSize.append(colDivForLargeSize);
 
@@ -90,7 +78,7 @@ const showSettings = (lang) => {
 
   const xLargeFieldLabel = document.createElement('label');
   xLargeFieldLabel.setAttribute('for', 'x-large');
-  xLargeFieldLabel.textContent = i18next.t('xLarge');
+  xLargeFieldLabel.textContent = lang('xLarge');
   colDivForXlargeSize.append(xLargeFieldLabel);
   rowDivForFieldSize.append(colDivForXlargeSize);
 
@@ -100,7 +88,7 @@ const showSettings = (lang) => {
   snakeSpeedDiv.classList.add('text-center', 'container');
   const snakeSpeedHeader = document.createElement('h3');
   snakeSpeedHeader.classList.add('mt-3');
-  snakeSpeedHeader.textContent = i18next.t('speed');
+  snakeSpeedHeader.textContent = lang('speed');
   snakeSpeedDiv.append(snakeSpeedHeader);
 
   const rowDivForSnakeSpeed = document.createElement('div');
@@ -118,7 +106,7 @@ const showSettings = (lang) => {
 
   const slowSpeedLabel = document.createElement('label');
   slowSpeedLabel.setAttribute('for', 'slow');
-  slowSpeedLabel.textContent = i18next.t('slow');
+  slowSpeedLabel.textContent = lang('slow');
   colDivForSlowSpeed.append(slowSpeedLabel);
   rowDivForSnakeSpeed.append(colDivForSlowSpeed);
 
@@ -133,7 +121,7 @@ const showSettings = (lang) => {
 
   const mediumSpeedLabel = document.createElement('label');
   mediumSpeedLabel.setAttribute('for', 'medium-speed');
-  mediumSpeedLabel.textContent = i18next.t('mediumSpeed');
+  mediumSpeedLabel.textContent = lang('mediumSpeed');
   colDivForMediumSpeed.append(mediumSpeedLabel);
   rowDivForSnakeSpeed.append(colDivForMediumSpeed);
 
@@ -148,7 +136,7 @@ const showSettings = (lang) => {
 
   const fastSpeedLabel = document.createElement('label');
   fastSpeedLabel.setAttribute('for', 'fast');
-  fastSpeedLabel.textContent = i18next.t('fast');
+  fastSpeedLabel.textContent = lang('fast');
   colDivForLargeSpeed.append(fastSpeedLabel);
   rowDivForSnakeSpeed.append(colDivForLargeSpeed);
 
@@ -163,7 +151,7 @@ const showSettings = (lang) => {
 
   const veryFastSpeedLabel = document.createElement('label');
   veryFastSpeedLabel.setAttribute('for', 'very-fast');
-  veryFastSpeedLabel.textContent = i18next.t('veryFast');
+  veryFastSpeedLabel.textContent = lang('veryFast');
   colDivForXlargeSpeed.append(veryFastSpeedLabel);
   rowDivForSnakeSpeed.append(colDivForXlargeSpeed);
 
@@ -174,19 +162,22 @@ const showSettings = (lang) => {
   const submitButton = document.createElement('button');
   submitButton.classList.add('btn', 'btn-primary');
   submitButton.type = 'submit';
-  submitButton.textContent = i18next.t('play');
+  submitButton.textContent = lang('play');
   submitButtonDiv.append(submitButton);
 
   settingsForm.append(submitButtonDiv);
+  settingsForm.hidden = false;
+
+  const errorDiv = document.createElement('div');
+  errorDiv.classList.add('error');
+
+  settingsForm.append(errorDiv);
 
   return settingsForm;
 };
 
 export default (state) => onChange(state, (path, value) => {
-  const body = document.querySelector('body');
-  const languageSelectDiv = document.querySelector('div');
-  languageSelectDiv.remove();
-  const errorDiv = document.createElement('div');
-  errorDiv.classList.add('error');
-  body.append(showSettings(value), errorDiv);
+  const settingsForm = document.querySelector('form');
+  settingsForm.textContent = '';
+  showSettings(value.currentLang);
 });

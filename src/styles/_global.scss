@@ -95,3 +95,15 @@ img {
         width: 1%;
     }
 }
+
+select {
+    position: absolute;
+    left: 90%;
+    top: 1%;
+}
+
+#play-again {
+    background-image: url('../images/playAgainArrow.svg');
+    height: 20%;
+    width: 20%;
+}

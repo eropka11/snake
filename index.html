@@ -33,15 +33,14 @@
     <header>
       <h1 class="text-center">ЗМЕЙКА</h1>
     </header>
-    <h2 class="text-center mt-3">Выберите язык | Choose the language</h2>
-    <div class="container mt-3">
-      <div class="row justify-content-around">
-        <div class="col-3">
-          <button id="ru" class="btn btn-primary">Русский</button>
-        </div>
-        <div class="col-3">
-          <button id="en" class="btn btn-primary">English</button>
-        </div>
+    <select id="lang-changer">
+        <option name="ru" value="ru">Русский</option>
+        <option name="en" value="en">English</option>
+    </select>
+    <form id="settings"></form>
+    <div>
+      <p>Играть снова</p>
+      <div id="play-again">
       </div>
     </div>
   </body>

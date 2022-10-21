@@ -1,6 +1,8 @@
 import _ from 'lodash';
-import i18next from 'i18next';
 import Hammer from 'hammerjs';
+import i18next from 'i18next';
+import ru from './locales/ru.js';
+import en from './locales/en.js';
 import languageWatcher from './watchers/languageWatcher.js';
 import errorsWatcher from './watchers/errorsWatcher.js';
 import startGameWatcher from './watchers/startGameWatcher.js';
@@ -28,7 +30,10 @@ export default () => {
         minValue: '',
       },
       error: '',
-      language: '',
+      language: {
+        currentLang: '',
+        isChanged: false,
+      },
       finalScore: '',
     },
     isBodyReversed: false,
@@ -41,6 +46,15 @@ export default () => {
     bodyCoordinates: [],
     scoreCounter: 0,
   };
+
+  i18next.init({
+    lng: 'ru',
+    debug: true,
+    resources: {
+      ru,
+      en,
+    },
+  });
 
   const watchedState = (path, value) => {
     const watchers = {
@@ -55,6 +69,15 @@ export default () => {
     };
     watchers[path][path] = value;
   };
+
+  watchedState('language', { currentLang: i18next.t, isChanged: false });
+  const languageChanger = document.querySelector('#lang-changer');
+  languageChanger.addEventListener('change', (e) => {
+    e.preventDefault();
+    state.stateToRender.language.isChanged = true;
+    i18next.changeLanguage(languageChanger.value);
+    watchedState('language', { currentLang: i18next.t, isChanged: false });
+  });
 
   let movingTimeout;
 
@@ -159,142 +182,134 @@ export default () => {
     }
   };
 
-  const languageButtons = document.querySelectorAll('button');
-  languageButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      watchedState('language', button.id);
+  const settingsForm = document.querySelector('#settings');
+  settingsForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-      const settingsForm = document.querySelector('form');
-      settingsForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    const settingsFormData = new FormData(settingsForm);
+    const difficulty = Number(settingsFormData.get('field-size'));
+    const speed = Number(settingsFormData.get('speed'));
 
-        const settingsFormData = new FormData(settingsForm);
-        const difficulty = Number(settingsFormData.get('field-size'));
-        const speed = Number(settingsFormData.get('speed'));
+    if (difficulty === 0) {
+      watchedState('error', i18next.t('errors.fieldSizeNotChoosed'));
+      return;
+    }
 
-        if (difficulty === 0) {
-          watchedState('error', i18next.t('errors.fieldSizeNotChoosed'));
-          return;
+    if (speed === 0) {
+      watchedState('error', i18next.t('errors.snakeSpeedNotChoosed'));
+      return;
+    }
+
+    const screenWidth = document.documentElement.clientWidth;
+    const screenHeight = document.documentElement.clientHeight;
+    const fieldParameters = { minValue: difficulty };
+
+    if (screenWidth > screenHeight) {
+      fieldParameters.columnsAmount = Math.floor((screenWidth / screenHeight) * difficulty);
+      fieldParameters.rowsAmount = difficulty;
+    } else if (screenWidth < screenHeight) {
+      fieldParameters.columnsAmount = difficulty;
+      fieldParameters.rowsAmount = Math.floor((screenHeight / screenWidth) * difficulty);
+    } else {
+      fieldParameters.rowsAmount = difficulty;
+      fieldParameters.columnsAmount = difficulty;
+    }
+
+    watchedState('difficulty', fieldParameters);
+    state.speed = speed;
+
+    state.fieldCells = initiateState(fieldParameters);
+    const nextHeadPosition = generateHeadPosition(fieldParameters);
+    const nextTailPosition = {
+      row: nextHeadPosition.row,
+      column: nextHeadPosition.column,
+      currentDirection: nextHeadPosition.direction,
+      nextDirection: nextHeadPosition.direction,
+      previousDirection: '',
+    };
+    state.tailPosition = nextTailPosition;
+    state.newHeadPosition = nextHeadPosition;
+    const nextFoodPosition = generateFoodPosition(state.fieldCells);
+
+    const headIndex = findIndex(nextHeadPosition, state.fieldCells);
+    watchedState('head', { nextHeadPosition });
+    state.fieldCells[headIndex].content = 'head';
+
+    const foodIndex = findIndex(nextFoodPosition, state.fieldCells);
+    watchedState('food', { nextFoodPosition });
+    state.fieldCells[foodIndex].content = 'food';
+
+    const tailIndex = findIndex(nextTailPosition, state.fieldCells);
+    watchedState('tail', { nextTailPosition });
+    state.fieldCells[tailIndex].content = 'tail';
+
+    mover(nextHeadPosition, 'up');
+  });
+
+  const movingChanger = (newDirection) => {
+    window.clearTimeout(movingTimeout);
+    state.newHeadPosition.nextDirection = newDirection;
+    movingTimeout = window.setTimeout(
+      mover,
+      state.speed / 2,
+      state.newHeadPosition,
+      newDirection,
+    );
+  };
+
+  const gameField = document.querySelector('body');
+  const hammerManager = new Hammer.Manager(gameField);
+  const swipe = new Hammer.Swipe();
+  hammerManager.add(swipe);
+  hammerManager.on('swipeleft', () => {
+    if (state.currentMovementDirection === 'up' || state.currentMovementDirection === 'down') {
+      movingChanger('left');
+    }
+  });
+  hammerManager.on('swiperight', () => {
+    if (state.currentMovementDirection === 'up' || state.currentMovementDirection === 'down') {
+      movingChanger('right');
+    }
+  });
+  hammerManager.on('swipeup', () => {
+    if (state.currentMovementDirection === 'left' || state.currentMovementDirection === 'right') {
+      movingChanger('up');
+    }
+  });
+  hammerManager.on('swipedown', () => {
+    if (state.currentMovementDirection === 'left' || state.currentMovementDirection === 'right') {
+      movingChanger('down');
+    }
+  });
+
+  gameField.addEventListener('keydown', (event) => {
+    switch (event.code) {
+      case 'KeyS':
+      case 'ArrowDown':
+        if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
+          movingChanger('down');
         }
-
-        if (speed === 0) {
-          watchedState('error', i18next.t('errors.snakeSpeedNotChoosed'));
-          return;
+        break;
+      case 'KeyW':
+      case 'ArrowUp':
+        if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
+          movingChanger('up');
         }
-
-        const screenWidth = document.documentElement.clientWidth;
-        const screenHeight = document.documentElement.clientHeight;
-        const fieldParameters = { minValue: difficulty };
-        console.log(screenWidth, screenHeight);
-
-        if (screenWidth > screenHeight) {
-          fieldParameters.columnsAmount = Math.floor((screenWidth / screenHeight) * difficulty);
-          fieldParameters.rowsAmount = difficulty;
-        } else if (screenWidth < screenHeight) {
-          fieldParameters.columnsAmount = difficulty;
-          fieldParameters.rowsAmount = Math.floor((screenHeight / screenWidth) * difficulty);
-        } else {
-          fieldParameters.rowsAmount = difficulty;
-          fieldParameters.columnsAmount = difficulty;
+        break;
+      case 'KeyA':
+      case 'ArrowLeft':
+        if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
+          movingChanger('left');
         }
-
-        watchedState('difficulty', fieldParameters);
-        state.speed = speed;
-
-        state.fieldCells = initiateState(fieldParameters);
-        const nextHeadPosition = generateHeadPosition(fieldParameters);
-        const nextTailPosition = {
-          row: nextHeadPosition.row,
-          column: nextHeadPosition.column,
-          currentDirection: nextHeadPosition.direction,
-          nextDirection: nextHeadPosition.direction,
-          previousDirection: '',
-        };
-        state.tailPosition = nextTailPosition;
-        state.newHeadPosition = nextHeadPosition;
-        const nextFoodPosition = generateFoodPosition(state.fieldCells);
-
-        const headIndex = findIndex(nextHeadPosition, state.fieldCells);
-        watchedState('head', { nextHeadPosition });
-        state.fieldCells[headIndex].content = 'head';
-
-        const foodIndex = findIndex(nextFoodPosition, state.fieldCells);
-        watchedState('food', { nextFoodPosition });
-        state.fieldCells[foodIndex].content = 'food';
-
-        const tailIndex = findIndex(nextTailPosition, state.fieldCells);
-        watchedState('tail', { nextTailPosition });
-        state.fieldCells[tailIndex].content = 'tail';
-
-        mover(nextHeadPosition, 'up');
-
-        const movingChanger = (newDirection) => {
-          window.clearTimeout(movingTimeout);
-          state.newHeadPosition.nextDirection = newDirection;
-          movingTimeout = window.setTimeout(
-            mover,
-            state.speed / 2,
-            state.newHeadPosition,
-            newDirection,
-          );
-        };
-
-        const gameField = document.querySelector('.gameField');
-        const hammerManager = new Hammer.Manager(gameField);
-        const swipe = new Hammer.Swipe();
-        hammerManager.add(swipe);
-        hammerManager.on('swipeleft', () => {
-          if (state.currentMovementDirection === 'up' || state.currentMovementDirection === 'down') {
-            movingChanger('left');
-          }
-        });
-        hammerManager.on('swiperight', () => {
-          if (state.currentMovementDirection === 'up' || state.currentMovementDirection === 'down') {
-            movingChanger('right');
-          }
-        });
-        hammerManager.on('swipeup', () => {
-          if (state.currentMovementDirection === 'left' || state.currentMovementDirection === 'right') {
-            movingChanger('up');
-          }
-        });
-        hammerManager.on('swipedown', () => {
-          if (state.currentMovementDirection === 'left' || state.currentMovementDirection === 'right') {
-            movingChanger('down');
-          }
-        });
-
-        window.addEventListener('keydown', (event) => {
-          switch (event.code) {
-            case 'KeyS':
-            case 'ArrowDown':
-              if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
-                movingChanger('down');
-              }
-              break;
-            case 'KeyW':
-            case 'ArrowUp':
-              if (state.currentMovementDirection !== 'up' && state.currentMovementDirection !== 'down') {
-                movingChanger('up');
-              }
-              break;
-            case 'KeyA':
-            case 'ArrowLeft':
-              if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
-                movingChanger('left');
-              }
-              break;
-            case 'KeyD':
-            case 'ArrowRight':
-              if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
-                movingChanger('right');
-              }
-              break;
-            default:
-              break;
-          }
-        });
-      });
-    });
+        break;
+      case 'KeyD':
+      case 'ArrowRight':
+        if (state.currentMovementDirection !== 'right' && state.currentMovementDirection !== 'left') {
+          movingChanger('right');
+        }
+        break;
+      default:
+        break;
+    }
   });
 };
