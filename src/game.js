@@ -12,11 +12,11 @@ import foodCoordinatesWatcher from './watchers/foodCoordinatesWatcher.js';
 import bodyCoordinatesWatcher from './watchers/bodyCoordinatesWatcher.js';
 import tailCoordinatesWatcher from './watchers/tailCoordinatesWatcher.js';
 import {
-  initiateState, generateHeadPosition, generateFoodPosition, findIndex,
+  initiateState, generateHeadPosition, generateFoodPosition, findIndex, stateReset,
 } from './handlers.js';
 
 export default () => {
-  const state = {
+  let state = {
     stateToRender: {
       coordinatesToUpdate: {
         head: '',
@@ -95,6 +95,8 @@ export default () => {
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
       if (head.row < 2 || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
+        state = stateReset();
+        initiateState();
         return;
       }
     }
@@ -105,6 +107,8 @@ export default () => {
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
       if (head.row === state.stateToRender.difficulty.rowsAmount || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
+        state = stateReset();
+        initiateState();
         return;
       }
     }
@@ -115,6 +119,8 @@ export default () => {
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
       if (head.column < 2 || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
+        state = stateReset();
+        initiateState();
         return;
       }
     }
@@ -125,6 +131,8 @@ export default () => {
       nextHeadIndex = findIndex(nextHeadPosition, state.fieldCells);
       if (head.column === state.stateToRender.difficulty.columnsAmount || state.fieldCells[nextHeadIndex].content === 'body') {
         watchedState('finalScore', state.scoreCounter);
+        state = stateReset();
+        initiateState();
         return;
       }
     }

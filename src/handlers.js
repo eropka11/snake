@@ -33,6 +33,40 @@ const findIndex = (position, cells) => _.findIndex(cells, {
   row: position.row, column: position.column,
 });
 
+const stateReset = () => {
+  const restedState = {
+    stateToRender: {
+      coordinatesToUpdate: {
+        head: '',
+        body: '',
+        tail: '',
+        food: '',
+      },
+      fieldParameters: {
+        rowsAmount: '',
+        columnsAmount: '',
+        minValue: '',
+      },
+      error: '',
+      language: {
+        currentLang: '',
+        isChanged: false,
+      },
+      finalScore: '',
+    },
+    isBodyReversed: false,
+    fieldCells: '',
+    speed: '',
+    currentMovementDirection: 'up',
+    newMovementDirection: '',
+    newHeadPosition: '',
+    tailPosition: '',
+    bodyCoordinates: [],
+    scoreCounter: 0,
+  };
+  return restedState;
+};
+
 export {
-  initiateState, generateHeadPosition, generateFoodPosition, findIndex,
+  initiateState, generateHeadPosition, generateFoodPosition, findIndex, stateReset,
 };
