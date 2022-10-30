@@ -32,7 +32,9 @@ const generateField = (fieldParameters) => {
 
 export default (state) => onChange(state, (path, value) => {
   const body = document.querySelector('body');
-  document.querySelector('#game-header').hidden = true;
+  const header = document.querySelector('#game-header');
+  header.classList.add('score');
+  header.hidden = true;
   document.querySelector('select').hidden = true;
   document.querySelector('form').hidden = true;
   const gameZone = generateField(value);

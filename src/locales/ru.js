@@ -19,5 +19,6 @@ export default {
       fieldSizeNotChoosed: 'Укажите размер поля',
       snakeSpeedNotChoosed: 'Укажите скорость змейки',
     },
+    snake: 'Змейка',
   },
 };

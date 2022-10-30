@@ -177,6 +177,13 @@ const showSettings = (lang) => {
 };
 
 export default (state) => onChange(state, (path, value) => {
+  const header = document.querySelector('#game-header');
+  if (header.classList.contains('score')) {
+    header.textContent = `${value.currentLang('yourScore')}: ${header.textContent.split(' ')[2]}`;
+  } else {
+    header.textContent = value.currentLang('snake');
+  }
+
   const settingsForm = document.querySelector('form');
   settingsForm.textContent = '';
   showSettings(value.currentLang);

@@ -19,5 +19,6 @@ export default {
       fieldSizeNotChoosed: 'Choose field size',
       snakeSpeedNotChoosed: 'Choose snake speed',
     },
+    snake: 'Snake',
   },
 };

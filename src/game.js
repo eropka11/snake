@@ -151,11 +151,7 @@ export default () => {
       state.fieldCells[tailIndex].content = 'empty';
 
       if (state.bodyCoordinates.length > 1) {
-        if (state.isBodyReversed) {
-          state.isBodyReversed = false;
-        } else {
-          state.isBodyReversed = true;
-        }
+        state.isBodyReversed = !state.isBodyReversed;
         watchedState('body', { head, isReversed: state.isBodyReversed });
         state.fieldCells[headIndex].content = 'body';
       } else {
@@ -171,9 +167,11 @@ export default () => {
 
     if (state.fieldCells[nextHeadIndex].content === 'food') {
       const nextFoodPosition = generateFoodPosition(state.fieldCells);
+      console.log(nextFoodPosition);
       const nextFoodIndex = findIndex(nextFoodPosition, state.fieldCells);
       const nextBodyIndex = findIndex(head, state.fieldCells);
-      watchedState('body', { head });
+      state.isBodyReversed = !state.isBodyReversed;
+      watchedState('body', { head, isReversed: state.isBodyReversed });
       state.fieldCells[nextBodyIndex].content = 'body';
 
       watchedState('head', { nextHeadPosition, head });
