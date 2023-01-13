@@ -67,21 +67,6 @@ const showSettings = (lang) => {
   colDivForLargeSize.append(largeFieldLabel);
   rowDivForFieldSize.append(colDivForLargeSize);
 
-  const colDivForXlargeSize = document.createElement('div');
-  colDivForXlargeSize.classList.add('col-12', 'col-sm-3');
-  const xLargeFieldInput = document.createElement('input');
-  xLargeFieldInput.type = 'radio';
-  xLargeFieldInput.value = '100';
-  xLargeFieldInput.id = 'x-large';
-  xLargeFieldInput.name = 'field-size';
-  colDivForXlargeSize.append(xLargeFieldInput);
-
-  const xLargeFieldLabel = document.createElement('label');
-  xLargeFieldLabel.setAttribute('for', 'x-large');
-  xLargeFieldLabel.textContent = lang('xLarge');
-  colDivForXlargeSize.append(xLargeFieldLabel);
-  rowDivForFieldSize.append(colDivForXlargeSize);
-
   settingsForm.append(fieldSizeDiv);
 
   const snakeSpeedDiv = document.createElement('div');
@@ -129,7 +114,7 @@ const showSettings = (lang) => {
   colDivForLargeSpeed.classList.add('col-12', 'col-sm-3');
   const fastSpeedInput = document.createElement('input');
   fastSpeedInput.type = 'radio';
-  fastSpeedInput.value = '200';
+  fastSpeedInput.value = '60';
   fastSpeedInput.id = 'fast';
   fastSpeedInput.name = 'speed';
   colDivForLargeSpeed.append(fastSpeedInput);
@@ -139,21 +124,6 @@ const showSettings = (lang) => {
   fastSpeedLabel.textContent = lang('fast');
   colDivForLargeSpeed.append(fastSpeedLabel);
   rowDivForSnakeSpeed.append(colDivForLargeSpeed);
-
-  const colDivForXlargeSpeed = document.createElement('div');
-  colDivForXlargeSpeed.classList.add('col-12', 'col-sm-3');
-  const veryFastSpeedInput = document.createElement('input');
-  veryFastSpeedInput.type = 'radio';
-  veryFastSpeedInput.value = '50';
-  veryFastSpeedInput.id = 'very-fast';
-  veryFastSpeedInput.name = 'speed';
-  colDivForXlargeSpeed.append(veryFastSpeedInput);
-
-  const veryFastSpeedLabel = document.createElement('label');
-  veryFastSpeedLabel.setAttribute('for', 'very-fast');
-  veryFastSpeedLabel.textContent = lang('veryFast');
-  colDivForXlargeSpeed.append(veryFastSpeedLabel);
-  rowDivForSnakeSpeed.append(colDivForXlargeSpeed);
 
   settingsForm.append(snakeSpeedDiv);
 
